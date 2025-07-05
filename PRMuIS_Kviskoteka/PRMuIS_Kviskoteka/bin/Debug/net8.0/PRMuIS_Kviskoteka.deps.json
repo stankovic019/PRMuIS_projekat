@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "PRMuIS_Kviskoteka/1.0.0": {
+        "runtime": {
+          "PRMuIS_Kviskoteka.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PRMuIS_Kviskoteka/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

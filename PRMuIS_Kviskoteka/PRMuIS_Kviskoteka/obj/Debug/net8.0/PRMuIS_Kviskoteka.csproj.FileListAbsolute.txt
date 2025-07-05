@@ -1,0 +1,15 @@
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\bin\Debug\net8.0\PRMuIS_Kviskoteka.exe
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\bin\Debug\net8.0\PRMuIS_Kviskoteka.deps.json
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\bin\Debug\net8.0\PRMuIS_Kviskoteka.runtimeconfig.json
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\bin\Debug\net8.0\PRMuIS_Kviskoteka.dll
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\bin\Debug\net8.0\PRMuIS_Kviskoteka.pdb
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.AssemblyInfoInputs.cache
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.AssemblyInfo.cs
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.csproj.CoreCompileInputs.cache
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.sourcelink.json
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.dll
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\refint\PRMuIS_Kviskoteka.dll
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.pdb
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\PRMuIS_Kviskoteka.genruntimeconfig.cache
+C:\Users\Dimitrije\Documents\GitHub\PRMuIS_projekat\PRMuIS_Kviskoteka\PRMuIS_Kviskoteka\obj\Debug\net8.0\ref\PRMuIS_Kviskoteka.dll

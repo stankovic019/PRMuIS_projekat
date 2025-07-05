@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\prmuis_kviskoteka\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka.csproj|solutionrelative:prmuis_kviskoteka\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 280,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Program.cs",
+              "RelativeDocumentMoniker": "PRMuIS_Kviskoteka\\Program.cs",
+              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Program.cs*",
+              "RelativeToolTip": "PRMuIS_Kviskoteka\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T16:22:48.482Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
