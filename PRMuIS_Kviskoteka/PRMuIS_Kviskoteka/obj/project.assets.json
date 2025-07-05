@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "Klase/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Klase.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Klase.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Klase/1.0.0": {
+      "type": "project",
+      "path": "../Klase/Klase.csproj",
+      "msbuildProject": "../Klase/Klase.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "Klase >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Dimitrije\\.nuget\\packages\\": {},
@@ -14,9 +33,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka.csproj",
-      "projectName": "PRMuIS_Kviskoteka",
-      "projectPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka.csproj",
+      "projectUniqueName": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj",
+      "projectName": "PRMuIS_Kviskoteka_Server",
+      "projectPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj",
       "packagesPath": "C:\\Users\\Dimitrije\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\obj\\",
       "projectStyle": "PackageReference",
@@ -38,7 +57,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Klase.csproj": {
+              "projectPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Klase.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
