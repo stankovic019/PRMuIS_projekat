@@ -9,6 +9,13 @@
         private List<string> pitanjaRedosled = new List<string>();
         private int indeksTrenutnogPitanja = -1;
 
+        public PitanjaIOdgovori(string tekucePitanje,  bool tacanOdgovor, Dictionary<string, bool> svaPitanja)
+        {
+            this.TekucePitanje = tekucePitanje;
+            this.TacanOdgovor = tacanOdgovor;
+            this.SvaPitanja = svaPitanja;
+        }
+
         public void UcitajPitanja(string putanjaDoFajla)
         {
             if (!File.Exists(putanjaDoFajla))
