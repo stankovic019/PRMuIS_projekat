@@ -19,7 +19,7 @@ namespace PRMuIS_Kviskoteka_Client
 
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             //IPEndPoint destinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); dimitrije IP
-            IPEndPoint destinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50001); //vojin IP
+            IPEndPoint destinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
             EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             while (true) // 1.
