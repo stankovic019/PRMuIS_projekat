@@ -1,4 +1,11 @@
-﻿using Klase.Anagrami.Enumeracije;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+using Klase.Anagrami.Enumeracije;
 
 namespace Klase.Anagrami.Modeli
 {
@@ -90,6 +97,12 @@ namespace Klase.Anagrami.Modeli
             return n;
         }
 
+        public void endGame()
+        {
+            foreach (PonudjenaRec rec in ponudjeneReci)
+                rec.Pogodjena = true;
+
+        }
 
     }
 }

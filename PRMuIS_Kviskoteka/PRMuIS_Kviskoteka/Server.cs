@@ -1,11 +1,22 @@
-﻿using Klase.General.Modeli;
+﻿using Klase.Anagrami.Modeli;
+using Klase.Anagrami.Servisi;
+using Klase.General.Modeli;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+#pragma warning disable SYSLIB0011
 
 namespace PRMuIS_Kviskoteka
 {
@@ -112,38 +123,64 @@ namespace PRMuIS_Kviskoteka
         {
             #region TCP SERVER
 
-                Socket TCPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket TCPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Any, 50001);
+            IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Any, 50001);
 
-                TCPserverSocket.Bind(TCPserverEP);
+            TCPserverSocket.Bind(TCPserverEP);
 
-                TCPserverSocket.Listen(5);
+            TCPserverSocket.Listen(5);
 
 
-                Console.WriteLine($"Server je stavljen u stanje osluskivanja i ocekuje komunikaciju na {TCPserverEP}");
+            Console.WriteLine($"Server je stavljen u stanje osluskivanja i ocekuje komunikaciju na {TCPserverEP}");
 
-                Socket acceptedSocket = TCPserverSocket.Accept();
+            Socket acceptedSocket = TCPserverSocket.Accept();
 
-                IPEndPoint clientEP = acceptedSocket.RemoteEndPoint as IPEndPoint;
+            IPEndPoint clientEP = acceptedSocket.RemoteEndPoint as IPEndPoint;
                
-                Console.WriteLine($"Povezao se novi klijent! Njegova adresa je {clientEP}");
-                string poruka = $"Vasa TCP/IP adresa i port su: {clientEP}";
-                byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+            Console.WriteLine($"Povezao se novi klijent! Njegova adresa je {clientEP}");
+            string poruka = $"Vasa TCP/IP adresa i port su: {clientEP}";
+            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
 
-                acceptedSocket.Send(binarnaPoruka);
+            acceptedSocket.Send(binarnaPoruka);
 
 
-                poruka = $"Dobrodosli u trening igru kviza \"KVISKOTEKA\". Danasnji takmicar je {igrac.username}";
+            poruka = $"Dobrodosli u trening igru kviza \"KVISKOTEKA\". Danasnji takmicar je {igrac.username}";
 
             binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
             acceptedSocket.Send(binarnaPoruka);
-             
 
-                Console.WriteLine("Server zavrsava sa radom");
-                Console.ReadKey();
-                acceptedSocket.Close();
-                TCPserverSocket.Close();
+
+            byte[] buffer = new byte[1024];    
+            int brojBajta = acceptedSocket.Receive(buffer);
+            poruka = Encoding.UTF8.GetString(buffer,0,brojBajta);
+
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                formatter.Serialize(ms, igrac);
+                byte[] data = ms.ToArray();
+
+                acceptedSocket.Send(data);
+            }
+
+            while (true)
+            {
+                buffer = new byte[1024];
+                brojBajta = acceptedSocket.Receive(buffer);
+                poruka = Encoding.UTF8.GetString(buffer, 0, brojBajta);
+                if (poruka == "exit")
+                    break;
+                Console.WriteLine(poruka);
+                Console.WriteLine();
+            }
+
+
+            Console.WriteLine("Server zavrsava sa radom");
+            Console.ReadKey();
+            acceptedSocket.Close();
+            TCPserverSocket.Close();
 
 
             #endregion

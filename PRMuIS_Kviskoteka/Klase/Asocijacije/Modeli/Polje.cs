@@ -1,4 +1,10 @@
-﻿namespace Klase.Asocijacije.Modeli
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+namespace Klase.Asocijacije.Modeli
 {
     public class Polje
     {

@@ -1,7 +1,13 @@
 ﻿using Klase.Anagrami.Enumeracije;
 using Klase.Anagrami.Modeli;
+using Klase.Asocijacije.Modeli;
 using Klase.General.Modeli;
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 namespace Klase.Anagrami.Servisi
 {
     public class IgraAnagrama
@@ -9,8 +15,10 @@ namespace Klase.Anagrami.Servisi
         public Anagram anagram;
         private Igrac igrac1, igrac2;
         int bodovi = 0; //temp
-        public IgraAnagrama(string anagramTxt, Igrac igrac)
+        public IgraAnagrama(Igrac igrac)
         {
+            string path = Directory.GetCurrentDirectory() + $"\\Files\\Anagrami\\anagram{new Random().Next(1, 9)}.txt";
+            string anagramTxt = File.ReadAllText(path);
             anagram = new Anagram(anagramTxt);
             igrac1 = igrac;
 
@@ -25,7 +33,7 @@ namespace Klase.Anagrami.Servisi
 
         public void treningIgra()
         {
-            while (true)
+            while (anagram.getPogodjene() < anagram.ponudjeneReci.Count)
             {
                 Console.WriteLine("TRENING");
                 Console.WriteLine("Poeni: " + igrac1.poeniUTrenutnojIgri);
@@ -33,6 +41,13 @@ namespace Klase.Anagrami.Servisi
                 Console.WriteLine("PONUDJENA REC: " + anagram.REC);
                 Console.Write("Unesite rec: ");
                 string rec = Console.ReadLine().Trim().ToLower();
+
+                if (rec == "izlaz")
+                {
+                    anagram.endGame();
+                    Console.Clear();
+                    break;
+                }
 
                 PovratneVrednostiAnagrama pv = anagram.postojiRec(rec);
 
@@ -58,6 +73,8 @@ namespace Klase.Anagrami.Servisi
                 Thread.Sleep(1000);
                 Console.Clear();
             }
+
+
         }
 
 

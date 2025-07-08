@@ -1,7 +1,12 @@
 ﻿using Klase.Asocijacije.Enumeracije;
 using Klase.Asocijacije.Modeli;
 using Klase.General.Modeli;
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 namespace Klase.Asocijacije.Servisi
 {
     public class IgraAsocijacija
@@ -11,8 +16,12 @@ namespace Klase.Asocijacije.Servisi
         private int bodovi = 0;
 
         //konstruktor igre ako je trening igra
-        public IgraAsocijacija(string asocijacija_txt, Igrac igrac)
+        public IgraAsocijacija(Igrac igrac)
         {
+
+            string path = Directory.GetCurrentDirectory() + $"\\Files\\Asocijacije\\asocijacija{new Random().Next(1, 6)}.txt";
+       
+            string asocijacija_txt = File.ReadAllText(path);
             asocijacija = new Asocijacija(asocijacija_txt);
             igrac1 = igrac;
         }

@@ -3,6 +3,21 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using Klase.General.Modeli;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Klase.Anagrami.Servisi;
+using Klase.Pitanja_i_Odgovori.Modeli;
+using Klase.Asocijacije.Servisi;
+
+#pragma warning disable SYSLIB0011
+
 
 namespace PRMuIS_Kviskoteka_Client
 {
@@ -78,7 +93,6 @@ namespace PRMuIS_Kviskoteka_Client
 
         static void upaliTCP() {
 
-           
 
             Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -95,7 +109,79 @@ namespace PRMuIS_Kviskoteka_Client
             brBajta = TCPclientSocket.Receive(buffer);
             ehoPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
             Console.WriteLine(ehoPoruka);
-            
+            Console.WriteLine();
+            string start;
+            do
+            {
+                Console.Write("Unesite \"START\" za pocetak kviza: ");
+                start = Console.ReadLine();
+            } while (start.ToLower() != "start");
+
+            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(start);
+            TCPclientSocket.Send(binarnaPoruka);
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            Igrac igrac = new Igrac();
+
+            try
+            {
+                brBajta = TCPclientSocket.Receive(buffer);
+               
+                using (MemoryStream ms = new MemoryStream(buffer, 0, brBajta))
+                {
+                    igrac = (Igrac)formatter.Deserialize(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Došlo je do greške: {ex.Message}");
+               
+            }
+
+            string poruka;
+
+            for (int i = 0; i < igrac.brojIgara; ++i)
+            {
+                string igra = igrac.getIgra(i);
+                Console.Clear();
+                Thread.Sleep(2000);
+                if (igra == "an")
+                {
+                    IgraAnagrama anagram = new IgraAnagrama(igrac);
+                    anagram.treningIgra();
+                    poruka = "Poeni u igri anagram: " + igrac.poeniUTrenutnojIgri;
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    TCPclientSocket.Send(binarnaPoruka);
+                    igrac.dodeliPoene(i);
+
+                    continue;
+                }
+
+                //if (igra == "po")
+                //{
+                //   PitanjaIOdgovori po = new PitanjaIOdgovori()
+                //    anagrami.treningIgra();
+                //    continue;
+                //}
+
+                if (igra == "as")
+                {
+                    IgraAsocijacija asocijacija = new IgraAsocijacija(igrac);
+                    asocijacija.treningIgra();
+                    poruka = "Poeni u igri asocijacije: " + igrac.poeniUTrenutnojIgri;
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    TCPclientSocket.Send(binarnaPoruka);
+                    igrac.dodeliPoene(i);
+                    continue;
+                }
+            }
+
+            binarnaPoruka = Encoding.UTF8.GetBytes(igrac.ToString());
+            TCPclientSocket.Send(binarnaPoruka);
+
+            binarnaPoruka = Encoding.UTF8.GetBytes("exit");
+            TCPclientSocket.Send(binarnaPoruka);
+
             Console.WriteLine("Klijent zavrsava sa radom");
             Console.ReadKey();
             TCPclientSocket.Close();
