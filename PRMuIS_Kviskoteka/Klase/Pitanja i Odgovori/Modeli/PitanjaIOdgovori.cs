@@ -16,6 +16,11 @@
             this.SvaPitanja = svaPitanja;
         }
 
+        public PitanjaIOdgovori()
+        {
+
+        }
+
         public void UcitajPitanja(string putanjaDoFajla)
         {
             if (!File.Exists(putanjaDoFajla))
