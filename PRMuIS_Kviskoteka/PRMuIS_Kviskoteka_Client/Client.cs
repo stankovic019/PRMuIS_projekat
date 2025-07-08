@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PRMuIS_Kviskoteka_Client
 {
@@ -17,10 +18,10 @@ namespace PRMuIS_Kviskoteka_Client
         {
             #region UDP SERVER - PRIJAVA KORISNIKA
 
-            Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint destinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP
-            //IPEndPoint destinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
-            EndPoint posiljaocEP = new IPEndPoint(IPAddress.Any, 0);
+            Socket UDPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP
+            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
+            EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             while (true) // 1.
             {
@@ -28,24 +29,39 @@ namespace PRMuIS_Kviskoteka_Client
                 Console.Write("Prijavite se: ");
                 string poruka = Console.ReadLine();
 
-                if (poruka.ToLower() == "exit") 
+                if (poruka.ToLower() == "exit")
                     break;
 
                 byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                 try
                 {
-                    int brBajta = clientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, destinationEP); // Poruka koju saljemo u binarnom zapisu, pocetak poruke, duzina, flegovi, odrediste
+                    int brBajta = UDPclientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPdestinationEP); // Poruka koju saljemo u binarnom zapisu, pocetak poruke, duzina, flegovi, odrediste
 
-                    Console.WriteLine($"Poslata prijava ka {destinationEP}...");
+                    Console.WriteLine($"Poslata prijava ka {UDPdestinationEP}...");
                     Console.WriteLine();
                     Thread.Sleep(1000);
-                    brBajta = clientSocket.ReceiveFrom(prijemniBafer, ref posiljaocEP);
+                    brBajta = UDPclientSocket.ReceiveFrom(prijemniBafer, ref UDPposiljaocEP);
 
                     string ehoPoruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
 
-                    Console.WriteLine($"{posiljaocEP} - {ehoPoruka}"); // 4
-                    Console.WriteLine();
-                    Thread.Sleep(1000);
+                    bool povratnaVrednost = ehoPoruka[0] == '1' ? true : false;
+
+                    if (!povratnaVrednost)
+                    {
+                        Console.WriteLine($"{UDPposiljaocEP} - {ehoPoruka.Substring(1)}"); 
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                    }
+                    else
+                    {
+                        
+                        Console.WriteLine($"{UDPposiljaocEP} - {ehoPoruka.Substring(1)}");
+                        Thread.Sleep(2000);
+                        Console.Clear();
+                        upaliTCP();
+                    }
+                    
+;
 
                 }
                 catch (SocketException ex)
@@ -55,10 +71,37 @@ namespace PRMuIS_Kviskoteka_Client
             }
 
             Console.WriteLine("Klijen zavrsava sa radom");
-            clientSocket.Close(); // Zatvaramo soket na kraju rada
+            UDPclientSocket.Close(); // Zatvaramo soket na kraju rada
             #endregion
         }
-    }
-    
-}
 
+
+        static void upaliTCP() {
+
+           
+
+            Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Loopback, 50001);
+            byte[] buffer = new byte[1024];
+            EndPoint TCPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
+            TCPclientSocket.Connect(TCPserverEP);
+            
+            int brBajta = TCPclientSocket.Receive(buffer);
+            string ehoPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+            Console.WriteLine(ehoPoruka);
+            Console.WriteLine();
+            
+            brBajta = TCPclientSocket.Receive(buffer);
+            ehoPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+            Console.WriteLine(ehoPoruka);
+            
+            Console.WriteLine("Klijent zavrsava sa radom");
+            Console.ReadKey();
+            TCPclientSocket.Close();
+
+            
+        }
+
+    }
+}
