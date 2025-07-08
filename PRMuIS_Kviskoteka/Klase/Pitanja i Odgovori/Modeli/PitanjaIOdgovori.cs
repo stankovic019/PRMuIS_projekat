@@ -30,10 +30,7 @@ namespace Klase.Pitanja_i_Odgovori.Modeli
 
         public void UcitajPitanja(string putanjaDoFajla)
         {
-            if (!File.Exists(putanjaDoFajla))
-                throw new FileNotFoundException("Fajl sa pitanjima nije pronađen: " + putanjaDoFajla);
-
-            var linije = File.ReadAllLines(putanjaDoFajla);
+            string[] linije = putanjaDoFajla.Split("\r\n");
             SvaPitanja.Clear();
 
             foreach (var linija in linije)
@@ -107,13 +104,13 @@ namespace Klase.Pitanja_i_Odgovori.Modeli
             return true;
         }
 
-        public bool ProveriOdgovor(char odgovorKlijenta)
+        public bool ProveriOdgovor(string odgovorKlijenta)
         {
-            odgovorKlijenta = char.ToLower(odgovorKlijenta);
-            if (odgovorKlijenta != 'a' && odgovorKlijenta != 'b')
+            odgovorKlijenta = odgovorKlijenta.ToLower();
+            if (odgovorKlijenta[0] != 'a' && odgovorKlijenta[0] != 'b')
                 throw new ArgumentException("Odgovor mora biti 'a' ili 'b'.");
 
-            bool odgovorJeTacan = (odgovorKlijenta == 'a');
+            bool odgovorJeTacan = (odgovorKlijenta[0] == 'a');
             return odgovorJeTacan == TacanOdgovor;
         }
 

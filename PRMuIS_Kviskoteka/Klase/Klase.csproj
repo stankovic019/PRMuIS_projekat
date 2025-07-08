@@ -48,7 +48,7 @@
     <None Update="Files\Asocijacije\asocijacija5.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Files\Pitanja i Odgovori\pitanja.txt">
+    <None Update="Files\PitanjaIOdgovori\pitanja.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

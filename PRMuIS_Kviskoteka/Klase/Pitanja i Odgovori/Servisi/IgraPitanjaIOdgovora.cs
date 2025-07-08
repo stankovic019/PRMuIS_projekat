@@ -1,16 +1,31 @@
-﻿using System;
+﻿using Klase.Asocijacije.Modeli;
+using Klase.General.Modeli;
+using Klase.Pitanja_i_Odgovori.Modeli;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Klase.Pitanja_i_Odgovori.Modeli;
 
 namespace Klase.Pitanja_i_Odgovori.Servisi
 {
     public class IgraPitanjaIOdgovora
     {
-        PitanjaIOdgovori igra = new PitanjaIOdgovori();
+        private PitanjaIOdgovori pitanja;
+        private PitanjaIOdgovori igra;
+        private Igrac igrac1, igrac2;
+
+        public IgraPitanjaIOdgovora(Igrac igrac)
+        {
+            string path = Directory.GetCurrentDirectory() + $"\\Files\\PitanjaIOdgovori\\pitanja.txt";
+
+            string pitanja_txt = File.ReadAllText(path);
+            igra = new PitanjaIOdgovori();
+            igra.UcitajPitanja(pitanja_txt);
+            this.igrac1 = igrac;
+
+        }
 
         public IgraPitanjaIOdgovora()
         {
@@ -42,7 +57,11 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                 Console.WriteLine("a) DA");
                 Console.WriteLine("b) NE");
                 Console.Write("Unesite odgovor (a/b): ");
-                var unos = Console.ReadKey().KeyChar;
+                string unos = Console.ReadLine();
+                if(unos.ToLower() == "izlaz")
+                {
+                    break;
+                }
                 Console.WriteLine();
 
                 try
@@ -50,7 +69,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                     if (igra.ProveriOdgovor(unos))
                     {
                         Console.WriteLine("Tačno! + " + poeniPoTacnom + " poena\n");
-                        poeni += poeniPoTacnom;
+                        igrac1.poeniUTrenutnojIgri += poeniPoTacnom;
                     }
                     else
                     {
@@ -63,9 +82,9 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                 }
             }
 
-            Console.WriteLine("Kraj igre! Ukupno poena: " + poeni + " od mogucih " + maksimalniPoeni);
-            Console.WriteLine("Pritisnite bilo koji taster za izlaz...");
-            Console.ReadKey();
+            //Console.WriteLine("Kraj igre! Ukupno poena: " + poeni + " od mogucih " + maksimalniPoeni);
+            //Console.WriteLine("Pritisnite bilo koji taster za izlaz...");
+            //Console.ReadKey();
         }
     }
 }

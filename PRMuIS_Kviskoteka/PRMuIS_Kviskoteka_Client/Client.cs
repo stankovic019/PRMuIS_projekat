@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Klase.Anagrami.Servisi;
 using Klase.Pitanja_i_Odgovori.Modeli;
 using Klase.Asocijacije.Servisi;
+using Klase.Pitanja_i_Odgovori.Servisi;
 
 #pragma warning disable SYSLIB0011
 
@@ -34,8 +35,8 @@ namespace PRMuIS_Kviskoteka_Client
             #region UDP SERVER - PRIJAVA KORISNIKA
 
             Socket UDPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP
-            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
+            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP
+            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
             EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             while (true) // 1.
@@ -157,12 +158,17 @@ namespace PRMuIS_Kviskoteka_Client
                     continue;
                 }
 
-                //if (igra == "po")
-                //{
-                //   PitanjaIOdgovori po = new PitanjaIOdgovori()
-                //    anagrami.treningIgra();
-                //    continue;
-                //}
+                if (igra == "po")
+                {
+                    IgraPitanjaIOdgovora po = new IgraPitanjaIOdgovora(igrac);
+                    po.Igraj();
+                    poruka = "Poeni u igri pitanja i odgovora: " + igrac.poeniUTrenutnojIgri;
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    TCPclientSocket.Send(binarnaPoruka);
+                    igrac.dodeliPoene(i);
+
+                    continue;
+                }
 
                 if (igra == "as")
                 {

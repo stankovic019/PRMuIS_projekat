@@ -60,8 +60,8 @@ namespace PRMuIS_Kviskoteka
             #region UDP SERVER - PRIJAVA KORISNIKA
 
             Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije port
-            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin port
+            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije port
+            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin port
             UDPserverSocket.Bind(UDPserverEP);
             Console.WriteLine($"Server je pokrenut i ceka poruku na: {UDPserverEP}");
 
