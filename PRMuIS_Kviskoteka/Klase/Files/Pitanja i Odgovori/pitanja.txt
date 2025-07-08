@@ -1,0 +1,35 @@
+Čovek ima tri bubrega.|b
+Zemlja je ravna ploča.|b
+Voda ključa na 100 stepeni.|a
+Psi mogu da vide u boji.|b
+Sunce izlazi na istoku.|a
+Pas je sisar.|a
+Morska voda je slatka.|b
+Čovek može disati pod vodom bez opreme.|b
+Žirafa ima dugačak vrat.|a
+Riba može leteti.|b
+Ptice mogu leteti.|a
+Riba diše kroz pluća.|b
+Mleko potiče od krava.|a
+Knjige se čitaju.|a
+Zemlja je centar Sunčevog sistema.|b
+Voda je bezbojan i bez mirisa.|a
+Lav je poznat kao kralj džungle.|a
+Ljudi mogu da dišu pod vodom bez opreme.|b
+Mesečina je svetlost koju emituje Mesec.|b
+Kiselo mleko nastaje fermentacijom.|a
+Slonovi imaju dobar osećaj mirisa.|a
+Sunce je zvezda.|a
+Snežni medved živi na Južnom polu.|b
+Banane rastu na drveću.|b
+Vatra je hladna.|b
+Sneg je zamrznuta voda.|a
+Zebra ima crne i bele pruge.|a
+Riba pliva.|a
+Cveće sadi insekte.|b
+Ljudi imaju četiri pluća.|b
+Mesečeva gravitacija utiče na plimu i oseku.|a
+Pčele proizvode med.|a
+Ljudi imaju šest prstiju na jednoj ruci.|b
+Mars je poznat kao Crvena planeta.|a
+Metallica je jedini bend koji je svirao na svim kontinentima. |a
