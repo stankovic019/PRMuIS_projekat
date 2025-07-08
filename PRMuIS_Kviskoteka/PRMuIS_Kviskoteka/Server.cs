@@ -29,7 +29,156 @@ namespace PRMuIS_Kviskoteka
     internal class Server
     {
         static Igrac igrac;
+        static bool prijavljen = false;
 
+        static void Main(string[] args)
+        {
+            UDPKonekcija();
+            Console.ReadLine();
+
+        }
+
+        static void UDPKonekcija() {
+
+            Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
+            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
+            UDPserverSocket.Bind(UDPserverEP);
+
+            Console.WriteLine($"UDP Server je pokrenut i ceka poruku na: {UDPserverEP}");
+
+            EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
+
+            while (!prijavljen) 
+            {
+                byte[] prijemniBafer = new byte[1024]; 
+
+                try
+                {
+                    int brBajta = UDPserverSocket.ReceiveFrom(prijemniBafer, ref UDPposiljaocEP);
+                    string poruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
+
+                    Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
+                    Console.WriteLine($"{UDPposiljaocEP}: {poruka}");
+
+                    //^([a-zA-Z0-9_]+)(,\s*[a-zA-Z0-9_]+)*$ regex za username samo bez liste igara - trebace za multiplayer
+
+                    //proveravamo da li je lepo poslata prijava korisnika
+
+                    if (!Regex.IsMatch(poruka, "([a-zA-Z0-9_]+)(,\\s*[a-zA-Z0-9_]+)+") || !proveriUnos(poruka))
+                    {
+                        poruka = "Neispravan unos. Pokusajte ponovo.";
+                        byte[] binarnaPoruka = Encoding.UTF8.GetBytes("0Server - " + poruka); 
+                        brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP);
+                        Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
+                    }
+                    else
+                    {
+
+                        igrac = new Igrac(poruka.Split(","));
+                        poruka = "Ispravno prijavljen korisnik '" + igrac.username + "'";
+                        byte[] binarnaPoruka = Encoding.UTF8.GetBytes("1Server - " + poruka); 
+                        brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP);
+                        Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
+                        TCPKonekcija();
+
+                    }
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine($"Doslo je do greske tokom prijema poruke: \n{ex}");
+                }
+
+            }
+
+            Console.WriteLine("UDP Server zavrsava sa radom");
+            UDPserverSocket.Close(); 
+            Console.ReadKey();
+
+        }
+
+        static void TCPKonekcija()
+        {
+
+
+            Socket TCPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Any, 50001);
+            TCPserverSocket.Bind(TCPserverEP);
+            TCPserverSocket.Listen(5);
+
+
+            Console.WriteLine($"TCP Server je stavljen u stanje osluskivanja i ocekuje komunikaciju na {TCPserverEP}");
+
+            Socket acceptedSocket = TCPserverSocket.Accept();
+
+            IPEndPoint clientEP = acceptedSocket.RemoteEndPoint as IPEndPoint;
+               
+            Console.WriteLine($"Povezao se novi klijent! Njegova adresa je {clientEP}");
+            
+            //saljemo podatke o adresi i portu klijentu
+            string poruka = $"Vasa TCP/IP adresa i port su: {clientEP}";
+            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+            acceptedSocket.Send(binarnaPoruka);
+
+            poruka = $"Dobrodosli u trening igru kviza \"KVISKOTEKA\". Danasnji takmicar je {igrac.username}";
+            binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+            acceptedSocket.Send(binarnaPoruka);
+
+
+            //primamo start poruku od klijenta
+            byte[] buffer = new byte[1024];    
+            int brojBajta = acceptedSocket.Receive(buffer);
+            poruka = Encoding.UTF8.GetString(buffer,0,brojBajta);
+
+            //saljemo podatke o igracu klijentu
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                formatter.Serialize(ms, igrac);
+                byte[] data = ms.ToArray();
+
+                acceptedSocket.Send(data);
+            }
+
+            //primamo poruke o poenima za klijenta
+            while (true)
+            {
+                buffer = new byte[1024];
+                brojBajta = acceptedSocket.Receive(buffer);
+                poruka = Encoding.UTF8.GetString(buffer, 0, brojBajta);
+                if (poruka == "exit")
+                    break;
+                Console.WriteLine(poruka);
+                Console.WriteLine();
+            }
+
+
+            //primamo podatke o igracu od klijenta, radi ispisa
+            try
+            {
+                brojBajta = acceptedSocket.Receive(buffer);
+
+                using (MemoryStream ms = new MemoryStream(buffer, 0, brojBajta))
+                {
+                    igrac = (Igrac)formatter.Deserialize(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Došlo je do greške: {ex.Message}");
+            }
+
+            Console.WriteLine("PODACI O IGRACU NAKON IGRANJA:");
+            Console.WriteLine(igrac);
+
+            Console.WriteLine();
+            Console.WriteLine("TCP Server zavrsava sa radom");
+            Console.ReadKey();
+            acceptedSocket.Close();
+            TCPserverSocket.Close();
+
+
+        }
 
         static bool proveriUnos(string unos)
         {
@@ -52,140 +201,5 @@ namespace PRMuIS_Kviskoteka
             return true;
 
         }
-
-
-        static void Main(string[] args)
-        {
-            bool prijavljen = false;
-            #region UDP SERVER - PRIJAVA KORISNIKA
-
-            Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije port
-            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin port
-            UDPserverSocket.Bind(UDPserverEP);
-            Console.WriteLine($"Server je pokrenut i ceka poruku na: {UDPserverEP}");
-
-            EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
-
-            string prethodna = "";
-            while (!prijavljen) // 1
-            {
-                byte[] prijemniBafer = new byte[1024]; // Inicijalizujemo bafer za prijem podataka sa pretpostavkom da poruka nece biti duza od 1024 bajta
-                try
-                {
-                    int brBajta = UDPserverSocket.ReceiveFrom(prijemniBafer, ref UDPposiljaocEP); // Primamo poruku i podatke o posiljaocu
-                    string poruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
-                    if (poruka == prethodna) //5
-                        break;
-
-                    Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
-                    Console.WriteLine($"{UDPposiljaocEP}: {poruka}");
-                    prethodna = poruka;
-
-                    //^([a-zA-Z0-9_]+)(,\s*[a-zA-Z0-9_]+)*$ regex za username samo bez liste igara - trebace za multiplayer
-
-
-                    if (!Regex.IsMatch(poruka, "([a-zA-Z0-9_]+)(,\\s*[a-zA-Z0-9_]+)+") || !proveriUnos(poruka))
-                    {
-                        poruka = "Neispravan unos. Pokusajte ponovo.";
-                        byte[] binarnaPoruka = Encoding.UTF8.GetBytes("0Server - " + poruka); // Dopisujemo Server eho cisto da znamo koja je poruka
-                        brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP); // 3.
-                        Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
-                    }
-                    else {
-
-                        igrac = new Igrac(poruka.Split(","));
-                        poruka = "Ispravno prijavljen korisnik '" + igrac.username + "'"; 
-                        byte[] binarnaPoruka = Encoding.UTF8.GetBytes("1Server - " + poruka); // Dopisujemo Server eho cisto da znamo koja je poruka
-                        brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP); // 3.
-                        Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
-                        UpaliTCP();
-
-                    }
-                }
-                catch (SocketException ex)
-                {
-                    Console.WriteLine($"Doslo je do greske tokom prijema poruke: \n{ex}");
-                }
-
-            }
-
-            Console.WriteLine("Server zavrsava sa radom");
-            UDPserverSocket.Close(); // Zatvaramo soket na kraju rada
-            Console.ReadKey();
-
-            #endregion
-
-
-        }
-
-        static void UpaliTCP()
-        {
-            #region TCP SERVER
-
-            Socket TCPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Any, 50001);
-
-            TCPserverSocket.Bind(TCPserverEP);
-
-            TCPserverSocket.Listen(5);
-
-
-            Console.WriteLine($"Server je stavljen u stanje osluskivanja i ocekuje komunikaciju na {TCPserverEP}");
-
-            Socket acceptedSocket = TCPserverSocket.Accept();
-
-            IPEndPoint clientEP = acceptedSocket.RemoteEndPoint as IPEndPoint;
-               
-            Console.WriteLine($"Povezao se novi klijent! Njegova adresa je {clientEP}");
-            string poruka = $"Vasa TCP/IP adresa i port su: {clientEP}";
-            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-
-            acceptedSocket.Send(binarnaPoruka);
-
-
-            poruka = $"Dobrodosli u trening igru kviza \"KVISKOTEKA\". Danasnji takmicar je {igrac.username}";
-
-            binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-            acceptedSocket.Send(binarnaPoruka);
-
-
-            byte[] buffer = new byte[1024];    
-            int brojBajta = acceptedSocket.Receive(buffer);
-            poruka = Encoding.UTF8.GetString(buffer,0,brojBajta);
-
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                formatter.Serialize(ms, igrac);
-                byte[] data = ms.ToArray();
-
-                acceptedSocket.Send(data);
-            }
-
-            while (true)
-            {
-                buffer = new byte[1024];
-                brojBajta = acceptedSocket.Receive(buffer);
-                poruka = Encoding.UTF8.GetString(buffer, 0, brojBajta);
-                if (poruka == "exit")
-                    break;
-                Console.WriteLine(poruka);
-                Console.WriteLine();
-            }
-
-
-            Console.WriteLine("Server zavrsava sa radom");
-            Console.ReadKey();
-            acceptedSocket.Close();
-            TCPserverSocket.Close();
-
-
-            #endregion
-
-        }
-
     }
 }

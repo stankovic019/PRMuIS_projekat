@@ -14,22 +14,40 @@ namespace Klase.Asocijacije.Servisi
         private Asocijacija asocijacija;
         private Igrac igrac1, igrac2;
         private int bodovi = 0;
-
         //konstruktor igre ako je trening igra
         public IgraAsocijacija(Igrac igrac)
         {
 
             string path = Directory.GetCurrentDirectory() + $"\\Files\\Asocijacije\\asocijacija{new Random().Next(1, 6)}.txt";
-       
-            string asocijacija_txt = File.ReadAllText(path);
+            string asocijacija_txt = string.Empty;
+            try
+            {
+                asocijacija_txt = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Neuspesno otvaranje fajla.\n {ex}");
+                return;
+            }
             asocijacija = new Asocijacija(asocijacija_txt);
             igrac1 = igrac;
         }
-        public IgraAsocijacija(string asocijacija_txt, Igrac igrac1, Igrac igrac2)
+        public IgraAsocijacija(Igrac igrac1, Igrac igrac2)
         {
+            string path = Directory.GetCurrentDirectory() + $"\\Files\\Asocijacije\\asocijacija{new Random().Next(1, 6)}.txt";
+            string asocijacija_txt = string.Empty;
+            try
+            {
+                asocijacija_txt = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Neuspesno otvaranje fajla.\n {ex}");
+                return;
+            }
             asocijacija = new Asocijacija(asocijacija_txt);
             this.igrac1 = igrac1;
-            this.igrac1 = igrac2;
+            this.igrac2 = igrac2;
         }
 
         private PovratnaVrednostUnosa checkUnos(string unos)

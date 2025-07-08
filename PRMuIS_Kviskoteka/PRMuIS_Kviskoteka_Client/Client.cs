@@ -30,55 +30,51 @@ namespace PRMuIS_Kviskoteka_Client
 
     public class Client
     {
+        static Igrac igrac;
+
         static void Main(string[] args)
         {
-            #region UDP SERVER - PRIJAVA KORISNIKA
+            UDPKonekcija();
+            Console.ReadLine();
 
+        }
+
+        static void UDPKonekcija()
+        {
             Socket UDPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP
-            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP
+            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP:port
+            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP:port
             EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
-            while (true) // 1.
+            while (true)
             {
                 byte[] prijemniBafer = new byte[1024];
                 Console.Write("Prijavite se: ");
                 string poruka = Console.ReadLine();
 
-                if (poruka.ToLower() == "exit")
+                if (poruka.ToLower() == "izlaz") //izlaz iz aplikacije
                     break;
 
                 byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                 try
                 {
-                    int brBajta = UDPclientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPdestinationEP); // Poruka koju saljemo u binarnom zapisu, pocetak poruke, duzina, flegovi, odrediste
-
+                    int brBajta = UDPclientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPdestinationEP); 
                     Console.WriteLine($"Poslata prijava ka {UDPdestinationEP}...");
                     Console.WriteLine();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
+
                     brBajta = UDPclientSocket.ReceiveFrom(prijemniBafer, ref UDPposiljaocEP);
+                    poruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
 
-                    string ehoPoruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
-
-                    bool povratnaVrednost = ehoPoruka[0] == '1' ? true : false;
-
-                    if (!povratnaVrednost)
-                    {
-                        Console.WriteLine($"{UDPposiljaocEP} - {ehoPoruka.Substring(1)}"); 
-                        Thread.Sleep(2000);
-                        Console.Clear();
-                    }
-                    else
-                    {
-                        
-                        Console.WriteLine($"{UDPposiljaocEP} - {ehoPoruka.Substring(1)}");
-                        Thread.Sleep(2000);
-                        Console.Clear();
-                        upaliTCP();
-                    }
+                    //povratna vrednost prijave, da li je uspesna ili ne
+                    bool povratnaVrednost = poruka[0] == '1' ? true : false;
                     
-;
+                        Console.WriteLine($"{UDPposiljaocEP} - {poruka.Substring(1)}");
+                        Thread.Sleep(2000);
+                        Console.Clear();
 
+                    if (povratnaVrednost)
+                        TCPKonekcija();
                 }
                 catch (SocketException ex)
                 {
@@ -86,43 +82,46 @@ namespace PRMuIS_Kviskoteka_Client
                 }
             }
 
-            Console.WriteLine("Klijen zavrsava sa radom");
+            Console.WriteLine("UDP Klijent zavrsava sa radom");
             UDPclientSocket.Close(); // Zatvaramo soket na kraju rada
-            #endregion
         }
 
 
-        static void upaliTCP() {
+        static void TCPKonekcija() {
 
 
             Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
             IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Loopback, 50001);
             byte[] buffer = new byte[1024];
             EndPoint TCPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
             TCPclientSocket.Connect(TCPserverEP);
             
+            //ispis poruke o tcp adresi i portu igre
             int brBajta = TCPclientSocket.Receive(buffer);
-            string ehoPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
-            Console.WriteLine(ehoPoruka);
+            string poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+
+            Console.WriteLine(poruka);
             Console.WriteLine();
-            
             brBajta = TCPclientSocket.Receive(buffer);
-            ehoPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
-            Console.WriteLine(ehoPoruka);
+            poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+            Console.WriteLine(poruka);
             Console.WriteLine();
-            string start;
+
+            //saljemo serveru podatak da moze da krene sa igrom
             do
             {
                 Console.Write("Unesite \"START\" za pocetak kviza: ");
-                start = Console.ReadLine();
-            } while (start.ToLower() != "start");
+                poruka = Console.ReadLine();
 
-            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(start);
+            } while (poruka.ToLower() != "start");
+
+            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
             TCPclientSocket.Send(binarnaPoruka);
 
             BinaryFormatter formatter = new BinaryFormatter();
-            Igrac igrac = new Igrac();
+            igrac = new Igrac();
+
+            //od servera trazimo da nam posalje podatke o igracu, kao i koje ce igre igrati
 
             try
             {
@@ -135,22 +134,26 @@ namespace PRMuIS_Kviskoteka_Client
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Došlo je do greške: {ex.Message}");
-               
+                Console.WriteLine($"Došlo je do greške: {ex.Message}"); 
             }
 
-            string poruka;
+
+            //pokretanje igara
+
+            Console.Clear();
+            Console.WriteLine("Pokrecem igre...");
+            
 
             for (int i = 0; i < igrac.brojIgara; ++i)
             {
+                Thread.Sleep(2000);
                 string igra = igrac.getIgra(i);
                 Console.Clear();
-                Thread.Sleep(2000);
                 if (igra == "an")
                 {
                     IgraAnagrama anagram = new IgraAnagrama(igrac);
                     anagram.treningIgra();
-                    poruka = "Poeni u igri anagram: " + igrac.poeniUTrenutnojIgri;
+                    poruka = "Ukupni poeni u igri 'Anagram': " + igrac.poeniUTrenutnojIgri;
                     binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                     TCPclientSocket.Send(binarnaPoruka);
                     igrac.dodeliPoene(i);
@@ -162,7 +165,7 @@ namespace PRMuIS_Kviskoteka_Client
                 {
                     IgraPitanjaIOdgovora po = new IgraPitanjaIOdgovora(igrac);
                     po.Igraj();
-                    poruka = "Poeni u igri pitanja i odgovora: " + igrac.poeniUTrenutnojIgri;
+                    poruka = "Ukupni poeni u igri 'Pitanja i Odgovori': " + igrac.poeniUTrenutnojIgri;
                     binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                     TCPclientSocket.Send(binarnaPoruka);
                     igrac.dodeliPoene(i);
@@ -174,7 +177,7 @@ namespace PRMuIS_Kviskoteka_Client
                 {
                     IgraAsocijacija asocijacija = new IgraAsocijacija(igrac);
                     asocijacija.treningIgra();
-                    poruka = "Poeni u igri asocijacije: " + igrac.poeniUTrenutnojIgri;
+                    poruka = "Ukupni poeni u igri 'Asocijacije': " + igrac.poeniUTrenutnojIgri;
                     binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                     TCPclientSocket.Send(binarnaPoruka);
                     igrac.dodeliPoene(i);
@@ -182,17 +185,23 @@ namespace PRMuIS_Kviskoteka_Client
                 }
             }
 
-            binarnaPoruka = Encoding.UTF8.GetBytes(igrac.ToString());
-            TCPclientSocket.Send(binarnaPoruka);
-
+           //kraj igranja
             binarnaPoruka = Encoding.UTF8.GetBytes("exit");
             TCPclientSocket.Send(binarnaPoruka);
 
-            Console.WriteLine("Klijent zavrsava sa radom");
-            Console.ReadKey();
-            TCPclientSocket.Close();
+            //slanje igraca nazad na server
+            using (MemoryStream ms = new MemoryStream())
+            {
+                formatter.Serialize(ms, igrac);
+                byte[] data = ms.ToArray();
 
-            
+                TCPclientSocket.Send(data);
+            }
+
+
+            Console.WriteLine("TCP Klijent zavrsava sa radom");
+            Console.WriteLine();
+            TCPclientSocket.Close();
         }
 
     }

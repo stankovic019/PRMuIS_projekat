@@ -66,8 +66,22 @@ namespace Klase.General.Modeli
 
             sb.Append($"IGRAC: {id} - {username}\n");
             sb.Append("Bodovi po igrama:\n");
+            int ukupno = 0;
             for (int i = 0; i < brojIgara; ++i)
-                sb.Append($"\t{igre[i]}:{poeniUIgrama[i]}\n");
+            {
+                if (igre[i] == "an")
+                    sb.Append("\tanagram: ");
+                else if (igre[i] == "po")
+                    sb.Append("\tpitanja i odgovori: ");
+                else if (igre[i] == "as")
+                    sb.Append("\tasocijacija: ");
+
+                sb.Append($"{poeniUIgrama[i]}\n");
+                ukupno += poeniUIgrama[i];
+            }
+
+            sb.Append($"Ukupno poena: {ukupno} ");
+            
 
             return sb.ToString();
 

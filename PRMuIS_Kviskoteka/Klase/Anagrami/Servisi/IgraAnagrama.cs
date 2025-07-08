@@ -14,17 +14,35 @@ namespace Klase.Anagrami.Servisi
     {
         public Anagram anagram;
         private Igrac igrac1, igrac2;
-        int bodovi = 0; //temp
+        private int bodovi = 0;
         public IgraAnagrama(Igrac igrac)
         {
             string path = Directory.GetCurrentDirectory() + $"\\Files\\Anagrami\\anagram{new Random().Next(1, 9)}.txt";
-            string anagramTxt = File.ReadAllText(path);
+            string anagramTxt = string.Empty;
+            try
+            {
+                anagramTxt = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Neuspesno otvaranje fajla. \n {ex}");
+            }
             anagram = new Anagram(anagramTxt);
             igrac1 = igrac;
 
         }
-        public IgraAnagrama(string anagramTxt, Igrac igrac1, Igrac igrac2)
+        public IgraAnagrama(Igrac igrac1, Igrac igrac2)
         {
+            string path = Directory.GetCurrentDirectory() + $"\\Files\\Anagrami\\anagram{new Random().Next(1, 9)}.txt";
+            string anagramTxt = string.Empty;
+            try
+            {
+                anagramTxt = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Neuspesno otvaranje fajla. \n {ex}");
+            }
             anagram = new Anagram(anagramTxt);
             this.igrac1 = igrac1;
             this.igrac2 = igrac2;
