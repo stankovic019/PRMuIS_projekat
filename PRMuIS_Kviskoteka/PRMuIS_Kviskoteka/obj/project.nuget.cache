@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "CbnFT1bLojE=",
+  "dgSpecHash": "Y9uYBtwi+AY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "D:\\Downloads\\Github\\PRMuIS_projekat\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Vojin\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.17\\microsoft.netcore.app.host.win-x64.8.0.17.nupkg.sha512"
+  ],
   "logs": []
 }
