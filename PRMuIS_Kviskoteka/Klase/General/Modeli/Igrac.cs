@@ -20,6 +20,7 @@ namespace Klase.General.Modeli
         private int[] poeniUIgrama;
 
         private bool kvisko;
+        private bool kviskoIdx;
 
         public Igrac()
         {
