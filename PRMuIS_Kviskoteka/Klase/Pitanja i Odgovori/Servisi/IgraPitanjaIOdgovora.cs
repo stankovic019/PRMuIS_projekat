@@ -156,6 +156,9 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
                 if (unos.ToLower() == "izlaz")
                 {
+                    binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+                    client.Send(binarnaPoruka);
+                    Console.WriteLine();
                     break;
                 }
                 Console.WriteLine();
@@ -186,13 +189,15 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
                 binarnaPoruka = Encoding.UTF8.GetBytes(unos);
                 client.Send(binarnaPoruka);
-
                 Thread.Sleep(1000);
                 Console.Clear();
+
             }
 
-            binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
-            client.Send(binarnaPoruka);
+            Thread.Sleep(1000);
+            Console.Clear();
+            //binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+            //client.Send(binarnaPoruka);
             //Console.WriteLine("Kraj igre! Ukupno poena: " + poeni + " od mogucih " + maksimalniPoeni);
             //Console.WriteLine("Pritisnite bilo koji taster za izlaz...");
             //Console.ReadKey();
