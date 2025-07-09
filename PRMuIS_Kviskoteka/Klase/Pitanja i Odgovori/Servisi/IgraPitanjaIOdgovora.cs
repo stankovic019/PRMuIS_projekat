@@ -4,6 +4,7 @@ using Klase.Pitanja_i_Odgovori.Modeli;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
@@ -14,9 +15,11 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 {
     public class IgraPitanjaIOdgovora
     {
-        private PitanjaIOdgovori pitanja;
+        private PitanjaIOdgovori pitanjaIOdgr = new PitanjaIOdgovori();
         private PitanjaIOdgovori igra;
         private Igrac igrac1, igrac2;
+        private int indeksTrenutnogPitanja = 0;
+        private List<string> pitanjaRedosled = new List<string>();
 
         public IgraPitanjaIOdgovora(Igrac igrac)
         {
@@ -24,7 +27,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
             string pitanja_txt = File.ReadAllText(path);
             igra = new PitanjaIOdgovori();
-            igra.UcitajPitanja(pitanja_txt);
+            UcitajPitanja(pitanja_txt);
             this.igrac1 = igrac;
 
         }
@@ -34,7 +37,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
             try
             {
-                igra.UcitajPitanja("pitanja.txt");
+                UcitajPitanja("pitanja.txt");
             }
             catch (Exception ex)
             {
@@ -50,12 +53,98 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
         private int maksimalniPoeni = poeniPoTacnom * 5;
 
+        public void UcitajPitanja(string putanjaDoFajla)
+        {
+            string[] linije = putanjaDoFajla.Split("\r\n");
+            pitanjaIOdgr.SvaPitanja.Clear();
+
+            foreach (var linija in linije)
+            {
+                if (string.IsNullOrWhiteSpace(linija))
+                    continue;
+
+                var delovi = linija.Split('|');
+                if (delovi.Length != 2)
+                    throw new FormatException("Svaka linija mora imati format: pitanje|a ili b");
+
+                var pitanje = delovi[0].Trim();
+                var odgovorSlovo = delovi[1].Trim().ToLower();
+
+                if (odgovorSlovo != "a" && odgovorSlovo != "b")
+                    throw new FormatException("Odgovor mora biti 'a' ili 'b'");
+
+                bool tacan = odgovorSlovo == "a"; // 'a' = DA = true, 'b' = NE = false
+                pitanjaIOdgr.SvaPitanja.Add(pitanje, tacan);
+            }
+
+            IzaberiIPromesajPitanja();
+            indeksTrenutnogPitanja = -1;
+        }
+
+        private void IzaberiIPromesajPitanja()
+        {
+            var rnd = new Random();
+            var svaPitanjaLista = pitanjaIOdgr.SvaPitanja.Keys.ToList();
+
+            if (svaPitanjaLista.Count > 5)
+            {
+                do
+                {
+                    pitanjaRedosled = svaPitanjaLista.OrderBy(_ => rnd.Next()).Take(5).ToList();
+                }
+                while (ImaTriIstaOdgovoraZaredom(pitanjaRedosled));
+            }
+            else
+            {
+                do
+                {
+                    pitanjaRedosled = svaPitanjaLista.OrderBy(_ => rnd.Next()).ToList();
+                }
+                while (ImaTriIstaOdgovoraZaredom(pitanjaRedosled));
+            }
+        }
+
+        private bool ImaTriIstaOdgovoraZaredom(List<string> pitanja)
+        {
+            for (int i = 2; i < pitanja.Count; i++)
+            {
+                bool o1 = pitanjaIOdgr.SvaPitanja[pitanja[i - 2]];
+                bool o2 = pitanjaIOdgr.SvaPitanja[pitanja[i - 1]];
+                bool o3 = pitanjaIOdgr.SvaPitanja[pitanja[i]];
+
+                if (o1 == o2 && o2 == o3)
+                    return true;
+            }
+            return false;
+        }
+
+        public bool PostaviSledecePitanje()
+        {
+            indeksTrenutnogPitanja++;
+            if (indeksTrenutnogPitanja == pitanjaRedosled.Count)
+                return false;
+
+            pitanjaIOdgr.TekucePitanje = pitanjaRedosled[indeksTrenutnogPitanja];
+            pitanjaIOdgr.TacanOdgovor = pitanjaIOdgr.SvaPitanja[pitanjaIOdgr.TekucePitanje];
+            return true;
+        }
+
+        public bool ProveriOdgovor(string odgovorKlijenta)
+        {
+            odgovorKlijenta = odgovorKlijenta.ToLower();
+            if (odgovorKlijenta[0] != 'a' && odgovorKlijenta[0] != 'b')
+                throw new ArgumentException("Odgovor mora biti 'a' ili 'b'.");
+
+            bool odgovorJeTacan = (odgovorKlijenta[0] == 'a');
+            return odgovorJeTacan == pitanjaIOdgr.TacanOdgovor;
+        }
+
         public void Igraj(Socket client)
         {
             byte[] binarnaPoruka;
-            while (igra.PostaviSledecePitanje())
+            while (PostaviSledecePitanje())
             {
-                Console.WriteLine("Pitanje: " + igra.TekucePitanje);
+                Console.WriteLine("Pitanje: " + pitanjaIOdgr.TekucePitanje);
                 Console.WriteLine("a) DA");
                 Console.WriteLine("b) NE");
                 byte[] buffer = new byte[1024];
@@ -73,7 +162,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
                 try
                 {
-                    if (igra.ProveriOdgovor(unos))
+                    if (ProveriOdgovor(unos))
                     {
                         Console.WriteLine("Tačno! + " + poeniPoTacnom + " poena\n");
                         igrac1.poeniUTrenutnojIgri += poeniPoTacnom;
@@ -86,6 +175,13 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                 catch (ArgumentException e)
                 {
                     Console.WriteLine(e.Message + " Pitanje se ne računa.\n");
+                }
+
+                if(indeksTrenutnogPitanja+1 == 5)
+                {
+                    binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+                    client.Send(binarnaPoruka);
+                    continue;
                 }
 
                 binarnaPoruka = Encoding.UTF8.GetBytes(unos);
