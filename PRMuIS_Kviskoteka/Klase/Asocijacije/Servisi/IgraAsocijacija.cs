@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 namespace Klase.Asocijacije.Servisi
@@ -85,14 +87,22 @@ namespace Klase.Asocijacije.Servisi
 
         }
 
-        public void treningIgra()
+        public void treningIgra(Socket client)
         {
             //trening igra omogucava igracu da otvara polja do mile volje, bez prethodnog pogadjanja konacnog resenja kolone
             //konacno resenje asocijacije se moze pogadjati jedino nakon pogodjenog makar jednog konacnog resenja kolone
 
+            StringBuilder sb = new StringBuilder();
+            sb.Append("ZA OTVARANJE POLJA UNESITE KOMANDU U FORMATU: 'A1'\n");
+            sb.Append("ZA POGADJANJE KONAČNOG REŠENJA KOLONE/ASOCIJACIJE UNESITE KOMANDU U FORMATU: " + "\n'A:[konacno_resenje]'/'K:[konacno_resenje]'\n");
+            sb.Append("ZA IZLAZ IZ TRENING MODA UNESITE KOMANDU: 'IZLAZ'\n");
+            Console.WriteLine();
+            byte[] binarnaPoruka;
+            binarnaPoruka = Encoding.UTF8.GetBytes(sb.ToString());
+            client.Send(binarnaPoruka);
+
             bool otvorioPolje = false;
             bool otvorenaSvaPolja = false;
-
             while (!asocijacija.pogodjenoKonacno)
             {
                 otvorenaSvaPolja = asocijacija.otvorenaSvaPolja();
@@ -100,13 +110,13 @@ namespace Klase.Asocijacije.Servisi
                 Console.WriteLine($"IGRAC: {igrac1.username} POENI: {igrac1.poeniUTrenutnojIgri} ");
                 Console.WriteLine(asocijacija.ToString());
                 Console.WriteLine();
-                Console.WriteLine("ZA OTVARANJE POLJA UNESITE KOMANDU U FORMATU: 'A1'");
-                Console.WriteLine("ZA POGADJANJE KONAČNOG REŠENJA KOLONE/ASOCIJACIJE UNESITE KOMANDU U FORMATU: " + "\n'A:[konacno_resenje]'/'K:[konacno_resenje]'");
-                Console.WriteLine("ZA IZLAZ IZ TRENING MODA UNESITE KOMANDU: 'IZLAZ'");
-                Console.WriteLine();
-                Console.Write("Unesite komandu: ");
 
-                string komanda = Console.ReadLine().ToUpper();
+                byte[] buffer = new byte[1024];
+                int brojBajta = client.Receive(buffer);
+                string komanda = Encoding.UTF8.GetString(buffer, 0, brojBajta).ToUpper();
+                Console.Write("Uneta komanda: " + komanda);
+                Console.WriteLine();
+                Thread.Sleep(1000);
 
                 if (komanda == "IZLAZ")
                 {
@@ -122,6 +132,8 @@ namespace Klase.Asocijacije.Servisi
                     Console.WriteLine("NEISPRAVAN UNOS. POKUSAJTE PONOVO.");
                     Thread.Sleep(1000);
                     Console.Clear();
+                    binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                    client.Send(binarnaPoruka);
                     continue; //continue jer treba da ostane na istom igracu
                 }
 
@@ -135,8 +147,12 @@ namespace Klase.Asocijacije.Servisi
                             Console.WriteLine("POLJE JE VEC OTVORENO. UNESITE PONOVO.");
                             Thread.Sleep(1000);
                             Console.Clear();
+                            binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                            client.Send(binarnaPoruka);
                             continue; //continue jer treba da ostane na istom igracu
                         }
+                        binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                        client.Send(binarnaPoruka);
                     }
                 }
 
@@ -152,6 +168,8 @@ namespace Klase.Asocijacije.Servisi
                         Console.WriteLine("NIJE OTVORENO NI JEDNO POLJE U KOLONI.");
                         Thread.Sleep(1000);
                         Console.Clear();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                        client.Send(binarnaPoruka);
                         continue;
                     }
 
@@ -160,6 +178,8 @@ namespace Klase.Asocijacije.Servisi
                         Console.WriteLine("RESENJE JE VEC POGODJENO.");
                         Thread.Sleep(1000);
                         Console.Clear();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                        client.Send(binarnaPoruka);
                         continue;
                     }
 
@@ -167,10 +187,14 @@ namespace Klase.Asocijacije.Servisi
                     {
                         Console.WriteLine("Konačno resenje kolone nije pogodjeno.");
                         Thread.Sleep(1000);
+                        binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                        client.Send(binarnaPoruka);
 
                     }
 
                     igrac1.poeniUTrenutnojIgri += poeni; //ako i nije pogodio, sabrace se sa nulom
+                    binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                    client.Send(binarnaPoruka);
                 }
 
                 if (pvu == PovratnaVrednostUnosa.KonacnoAsocijacija)
@@ -182,6 +206,8 @@ namespace Klase.Asocijacije.Servisi
                     if (!pogodjeno)
                     {
                         Console.WriteLine("Konačno resenje asocijacije nije pogodjeno.");
+                        binarnaPoruka = Encoding.UTF8.GetBytes(komanda);
+                        client.Send(binarnaPoruka);
                         Thread.Sleep(1000);
                     }
 
@@ -190,10 +216,15 @@ namespace Klase.Asocijacije.Servisi
 
                 Console.Clear();
             }
+
             Console.WriteLine("TRENING");
             Console.WriteLine($"IGRAC: {igrac1.username} POENI: {igrac1.poeniUTrenutnojIgri} ");
             Console.WriteLine();
             Console.WriteLine(asocijacija.ToString());
+
+            binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+            client.Send(binarnaPoruka);
+
         }
 
 

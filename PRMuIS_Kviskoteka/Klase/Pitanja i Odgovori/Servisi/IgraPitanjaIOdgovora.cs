@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,17 +50,22 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
         private int maksimalniPoeni = poeniPoTacnom * 5;
 
-        public void Igraj()
+        public void Igraj(Socket client)
         {
-
+            byte[] binarnaPoruka;
             while (igra.PostaviSledecePitanje())
             {
                 Console.WriteLine("Pitanje: " + igra.TekucePitanje);
                 Console.WriteLine("a) DA");
                 Console.WriteLine("b) NE");
-                Console.Write("Unesite odgovor (a/b): ");
-                string unos = Console.ReadLine();
-                if(unos.ToLower() == "izlaz")
+                byte[] buffer = new byte[1024];
+                int brojBajta = client.Receive(buffer);
+                string unos = Encoding.UTF8.GetString(buffer, 0, brojBajta);
+                Console.Write("Uneti odgovor: " + unos);
+                Thread.Sleep(1000);
+              
+
+                if (unos.ToLower() == "izlaz")
                 {
                     break;
                 }
@@ -80,8 +87,16 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                 {
                     Console.WriteLine(e.Message + " Pitanje se ne računa.\n");
                 }
+
+                binarnaPoruka = Encoding.UTF8.GetBytes(unos);
+                client.Send(binarnaPoruka);
+
+                Thread.Sleep(1000);
+                Console.Clear();
             }
 
+            binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+            client.Send(binarnaPoruka);
             //Console.WriteLine("Kraj igre! Ukupno poena: " + poeni + " od mogucih " + maksimalniPoeni);
             //Console.WriteLine("Pritisnite bilo koji taster za izlaz...");
             //Console.ReadKey();

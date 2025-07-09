@@ -16,6 +16,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Klase.Pitanja_i_Odgovori.Servisi;
+using Klase.Asocijacije.Servisi;
 #pragma warning disable SYSLIB0011
 
 namespace PRMuIS_Kviskoteka
@@ -81,6 +83,7 @@ namespace PRMuIS_Kviskoteka
                         brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP);
                         Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
                         TCPKonekcija();
+                        break;
 
                     }
                 }
@@ -130,44 +133,56 @@ namespace PRMuIS_Kviskoteka
             int brojBajta = acceptedSocket.Receive(buffer);
             poruka = Encoding.UTF8.GetString(buffer,0,brojBajta);
 
-            //saljemo podatke o igracu klijentu
-            BinaryFormatter formatter = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
+            poruka = Convert.ToString(igrac.brojIgara);
+            binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+            acceptedSocket.Send(binarnaPoruka);
+
+
+            for (int i = 0; i < igrac.brojIgara; ++i)
             {
-                formatter.Serialize(ms, igrac);
-                byte[] data = ms.ToArray();
-
-                acceptedSocket.Send(data);
-            }
-
-            //primamo poruke o poenima za klijenta
-            while (true)
-            {
-                buffer = new byte[1024];
-                brojBajta = acceptedSocket.Receive(buffer);
-                poruka = Encoding.UTF8.GetString(buffer, 0, brojBajta);
-                if (poruka == "exit")
-                    break;
-                Console.WriteLine(poruka);
-                Console.WriteLine();
-            }
-
-
-            //primamo podatke o igracu od klijenta, radi ispisa
-            try
-            {
-                brojBajta = acceptedSocket.Receive(buffer);
-
-                using (MemoryStream ms = new MemoryStream(buffer, 0, brojBajta))
+                Thread.Sleep(2000);
+                string igra = igrac.getIgra(i);
+                Console.Clear();
+                if (igra == "an")
                 {
-                    igrac = (Igrac)formatter.Deserialize(ms);
+                    IgraAnagrama anagram = new IgraAnagrama(igrac);
+                    poruka = "ANAGRAM";
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    acceptedSocket.Send(binarnaPoruka);
+                    anagram.treningIgra(acceptedSocket);
+                    Console.WriteLine("Ukupni poeni u igri 'Anagram': " + igrac.poeniUTrenutnojIgri);
+                    igrac.dodeliPoene(i);
+                    continue;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Došlo je do greške: {ex.Message}");
+
+                if (igra == "po")
+                {
+                    IgraPitanjaIOdgovora po = new IgraPitanjaIOdgovora(igrac);
+                    poruka = "PITANJA I ODGOVORI";
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    acceptedSocket.Send(binarnaPoruka);
+                    po.Igraj(acceptedSocket);
+                    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori': " + igrac.poeniUTrenutnojIgri); 
+                    igrac.dodeliPoene(i);
+                    continue;
+                }
+
+                if (igra == "as")
+                {
+                    IgraAsocijacija asocijacija = new IgraAsocijacija(igrac);
+                    poruka = "ASOCIJACIJE";
+                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                    acceptedSocket.Send(binarnaPoruka);
+                    asocijacija.treningIgra(acceptedSocket);
+                    Console.WriteLine("Ukupni poeni u igri 'Asocijacije': " + igrac.poeniUTrenutnojIgri);
+                    igrac.dodeliPoene(i);
+                    continue;
+                }
+
             }
 
+            Thread.Sleep(1000);
+            Console.Clear();
             Console.WriteLine("PODACI O IGRACU NAKON IGRANJA:");
             Console.WriteLine(igrac);
 
@@ -176,7 +191,6 @@ namespace PRMuIS_Kviskoteka
             Console.ReadKey();
             acceptedSocket.Close();
             TCPserverSocket.Close();
-
 
         }
 

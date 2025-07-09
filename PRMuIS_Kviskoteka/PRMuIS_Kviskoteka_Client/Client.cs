@@ -74,7 +74,10 @@ namespace PRMuIS_Kviskoteka_Client
                         Console.Clear();
 
                     if (povratnaVrednost)
+                    {
                         TCPKonekcija();
+                        break;
+                    }
                 }
                 catch (SocketException ex)
                 {
@@ -95,7 +98,7 @@ namespace PRMuIS_Kviskoteka_Client
             byte[] buffer = new byte[1024];
             EndPoint TCPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
             TCPclientSocket.Connect(TCPserverEP);
-            
+
             //ispis poruke o tcp adresi i portu igre
             int brBajta = TCPclientSocket.Receive(buffer);
             string poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
@@ -118,86 +121,87 @@ namespace PRMuIS_Kviskoteka_Client
             byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
             TCPclientSocket.Send(binarnaPoruka);
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            igrac = new Igrac();
+            //BinaryFormatter formatter = new BinaryFormatter();
+            //igrac = new Igrac();
 
-            //od servera trazimo da nam posalje podatke o igracu, kao i koje ce igre igrati
+            ////od servera trazimo da nam posalje podatke o igracu, kao i koje ce igre igrati
 
-            try
-            {
-                brBajta = TCPclientSocket.Receive(buffer);
-               
-                using (MemoryStream ms = new MemoryStream(buffer, 0, brBajta))
-                {
-                    igrac = (Igrac)formatter.Deserialize(ms);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Došlo je do greške: {ex.Message}"); 
-            }
+            //try
+            //{
+            //    brBajta = TCPclientSocket.Receive(buffer);
+
+            //    using (MemoryStream ms = new MemoryStream(buffer, 0, brBajta))
+            //    {
+            //        igrac = (Igrac)formatter.Deserialize(ms);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Došlo je do greške: {ex.Message}"); 
+            //}
 
 
             //pokretanje igara
 
             Console.Clear();
-            Console.WriteLine("Pokrecem igre...");
+            //Console.WriteLine("Pokrecem igre...");
+
+            brBajta = TCPclientSocket.Receive(buffer);
+            int brojIgara = Convert.ToInt32(Encoding.UTF8.GetString(buffer, 0, brBajta));
+
+            for (int i = 0; i < brojIgara; ++i)
+            {
+
+                brBajta = TCPclientSocket.Receive(buffer);
+                string trenutnaIgra = Encoding.UTF8.GetString(buffer, 0, brBajta);
+
+                Console.WriteLine("Trenutna igra broj " + (i + 1) + ": " + trenutnaIgra);
+
+                if (trenutnaIgra == "ANAGRAM")
+                    while (true)
+                    {
+                        Console.Write("Unesite rec: ");
+                        poruka = Console.ReadLine().Trim().ToLower();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                        TCPclientSocket.Send(binarnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz") break;
+                    }
+                else if (trenutnaIgra == "PITANJA I ODGOVORI")
+                    while (true)
+                    {
+                        Console.Write("Unesite odgovor (a/b): ");
+                        poruka = Console.ReadLine().Trim().ToLower();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                        TCPclientSocket.Send(binarnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz") break;
+                    }
+                else if (trenutnaIgra == "ASOCIJACIJE")
+                {
+                    brBajta = TCPclientSocket.Receive(buffer);
+                    Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, brBajta));
+                    Console.WriteLine();
+                    while (true)
+                    {
+                        Console.Write("Unesite komandu: ");
+                        poruka = Console.ReadLine().Trim().ToLower();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                        TCPclientSocket.Send(binarnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz") break;
+                    }
+                }
             
-
-            for (int i = 0; i < igrac.brojIgara; ++i)
-            {
-                Thread.Sleep(2000);
-                string igra = igrac.getIgra(i);
+                Thread.Sleep(1000);
                 Console.Clear();
-                if (igra == "an")
-                {
-                    IgraAnagrama anagram = new IgraAnagrama(igrac);
-                    anagram.treningIgra();
-                    poruka = "Ukupni poeni u igri 'Anagram': " + igrac.poeniUTrenutnojIgri;
-                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                    TCPclientSocket.Send(binarnaPoruka);
-                    igrac.dodeliPoene(i);
-
-                    continue;
-                }
-
-                if (igra == "po")
-                {
-                    IgraPitanjaIOdgovora po = new IgraPitanjaIOdgovora(igrac);
-                    po.Igraj();
-                    poruka = "Ukupni poeni u igri 'Pitanja i Odgovori': " + igrac.poeniUTrenutnojIgri;
-                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                    TCPclientSocket.Send(binarnaPoruka);
-                    igrac.dodeliPoene(i);
-
-                    continue;
-                }
-
-                if (igra == "as")
-                {
-                    IgraAsocijacija asocijacija = new IgraAsocijacija(igrac);
-                    asocijacija.treningIgra();
-                    poruka = "Ukupni poeni u igri 'Asocijacije': " + igrac.poeniUTrenutnojIgri;
-                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                    TCPclientSocket.Send(binarnaPoruka);
-                    igrac.dodeliPoene(i);
-                    continue;
-                }
             }
 
-           //kraj igranja
-            binarnaPoruka = Encoding.UTF8.GetBytes("exit");
-            TCPclientSocket.Send(binarnaPoruka);
-
-            //slanje igraca nazad na server
-            using (MemoryStream ms = new MemoryStream())
-            {
-                formatter.Serialize(ms, igrac);
-                byte[] data = ms.ToArray();
-
-                TCPclientSocket.Send(data);
-            }
-
+            Thread.Sleep(1000);
+            Console.Clear();
 
             Console.WriteLine("TCP Klijent zavrsava sa radom");
             Console.WriteLine();
