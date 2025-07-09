@@ -43,7 +43,8 @@ namespace PRMuIS_Kviskoteka
         static void UDPKonekcija() {
 
             Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
+            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
+            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //test ip
             //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
             UDPserverSocket.Bind(UDPserverEP);
 
