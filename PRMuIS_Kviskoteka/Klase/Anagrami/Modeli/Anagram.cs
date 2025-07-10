@@ -21,6 +21,7 @@ namespace Klase.Anagrami.Modeli
     {
         public string REC { get; set; }
         public List<PonudjenaRec> ponudjeneReci;
+        
         Dictionary<char, int> rec = new Dictionary<char, int>();
 
         public Anagram(string anagramTxt)
@@ -74,10 +75,12 @@ namespace Klase.Anagrami.Modeli
                 foreach (PonudjenaRec rec in ponudjeneReci)
                     if (rec.Rec.Equals(anagram.ToLower().Trim()))
                     {
-                        if (!rec.pogodiRec()) //ako je rec vec pogodjena
-                            pv = PovratneVrednostiAnagrama.VecPogodjeno;
-                        else
+                        if(rec.pogodiRec() && !rec.PogodjenaDrugiPut)
                             pv = PovratneVrednostiAnagrama.IspravnaRec;
+                        else if (rec.pogodiRec2() && rec.PogodjenaPrviPut)
+                            pv = PovratneVrednostiAnagrama.DrugiIgracPogodio;
+                        else
+                            pv = PovratneVrednostiAnagrama.VecPogodjeno;
 
                         return pv;
                     }
@@ -92,7 +95,7 @@ namespace Klase.Anagrami.Modeli
         {
             int n = 0;
             foreach (PonudjenaRec rec in ponudjeneReci)
-                if (rec.Pogodjena) n++;
+                if (rec.PogodjenaPrviPut) n++;
 
             return n;
         }
@@ -100,7 +103,7 @@ namespace Klase.Anagrami.Modeli
         public void endGame()
         {
             foreach (PonudjenaRec rec in ponudjeneReci)
-                rec.Pogodjena = true;
+                rec.PogodjenaPrviPut = true;
 
         }
 

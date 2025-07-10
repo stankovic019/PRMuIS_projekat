@@ -10,22 +10,35 @@ namespace Klase.Anagrami.Modeli
     public class PonudjenaRec
     {
         public string Rec { get; }
-        public bool Pogodjena { get; set; }
+        public bool PogodjenaPrviPut { get; set; }
+        public bool PogodjenaDrugiPut { get; set; }
 
         public PonudjenaRec(string Rec)
         {
             this.Rec = Rec;
-            this.Pogodjena = false;
+            this.PogodjenaPrviPut = false;
+            this.PogodjenaDrugiPut = false;
         }
 
         public bool pogodiRec()
         {
-            if (!this.Pogodjena)
+            if (!this.PogodjenaPrviPut)
             {
-                Pogodjena = true;
+                PogodjenaPrviPut = true;
                 return true;
             }
             return false;
         }
+
+        public bool pogodiRec2()
+        {
+            if (!this.PogodjenaDrugiPut)
+            {
+                PogodjenaDrugiPut = true;
+                return true;
+            }
+            return false;
+        }
+
     }
 }

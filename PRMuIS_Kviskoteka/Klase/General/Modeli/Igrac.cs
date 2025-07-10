@@ -20,10 +20,31 @@ namespace Klase.General.Modeli
         private int[] poeniUIgrama;
 
         private bool kvisko;
-        private bool kviskoIdx;
+        private int kviskoIdx;
 
-        public Igrac()
+        private List<bool> penalties = new List<bool>();
+
+        public void addPenalty()
         {
+            penalties.Add(true);
+        }
+
+        public int getPenalties() { return penalties.Count; }
+
+        public Igrac(string username) 
+        {
+            id = new Random().Next(0, 256);
+            this.username = username;
+            poeniUTrenutnojIgri = 0;
+            brojIgara = 3;
+            igre = new string[]
+            {
+                new string("an"),
+                new string("po"),
+                new string("as"),
+            };
+            poeniUIgrama = new int[brojIgara];
+            kvisko = false;
 
         }
 
@@ -40,11 +61,12 @@ namespace Klase.General.Modeli
             kvisko = false;
         }
 
-        public bool ulaganjeKviska()
+        public bool ulaganjeKviska(int idx)
         {
             if (!kvisko)
             {
                 kvisko = true;
+                kviskoIdx = idx;
                 return true;
             }
             return false;
@@ -53,7 +75,10 @@ namespace Klase.General.Modeli
         public void dodeliPoene(int idx)
         {
             poeniUIgrama[idx] = poeniUTrenutnojIgri;
+            if (idx == kviskoIdx)
+                poeniUIgrama[idx] *= 2;
             poeniUTrenutnojIgri = 0;
+            penalties.Clear();
         }
 
         public string getIgra(int idx)

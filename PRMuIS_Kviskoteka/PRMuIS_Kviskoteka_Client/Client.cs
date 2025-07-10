@@ -67,15 +67,20 @@ namespace PRMuIS_Kviskoteka_Client
                     poruka = Encoding.UTF8.GetString(prijemniBafer, 0, brBajta);
 
                     //povratna vrednost prijave, da li je uspesna ili ne
-                    bool povratnaVrednost = poruka[0] == '1' ? true : false;
+                    int povratnaVrednost = poruka[0] - 48;
                     
                         Console.WriteLine($"{UDPposiljaocEP} - {poruka.Substring(1)}");
                         Thread.Sleep(2000);
                         Console.Clear();
 
-                    if (povratnaVrednost)
+                    if (povratnaVrednost == 1)
                     {
-                        TCPKonekcija();
+                        TCPKonekcijaJedanKorisnik();
+                        break;
+                    }
+                    else if(povratnaVrednost == 2)
+                    {
+                        TCPKonekcijaDvaKorisnika();
                         break;
                     }
                 }
@@ -90,7 +95,7 @@ namespace PRMuIS_Kviskoteka_Client
         }
 
 
-        static void TCPKonekcija() {
+        static void TCPKonekcijaJedanKorisnik() {
 
 
             Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -121,30 +126,11 @@ namespace PRMuIS_Kviskoteka_Client
             byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
             TCPclientSocket.Send(binarnaPoruka);
 
-            //BinaryFormatter formatter = new BinaryFormatter();
-            //igrac = new Igrac();
-
-            ////od servera trazimo da nam posalje podatke o igracu, kao i koje ce igre igrati
-
-            //try
-            //{
-            //    brBajta = TCPclientSocket.Receive(buffer);
-
-            //    using (MemoryStream ms = new MemoryStream(buffer, 0, brBajta))
-            //    {
-            //        igrac = (Igrac)formatter.Deserialize(ms);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Došlo je do greške: {ex.Message}"); 
-            //}
-
-
+        
             //pokretanje igara
 
             Console.Clear();
-            //Console.WriteLine("Pokrecem igre...");
+   
 
             brBajta = TCPclientSocket.Receive(buffer);
             int brojIgara = Convert.ToInt32(Encoding.UTF8.GetString(buffer, 0, brBajta));
@@ -206,6 +192,105 @@ namespace PRMuIS_Kviskoteka_Client
             Console.WriteLine("TCP Klijent zavrsava sa radom");
             Console.WriteLine();
             TCPclientSocket.Close();
+        }
+
+        static void TCPKonekcijaDvaKorisnika()
+        {
+            Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            IPEndPoint TCPserverEP = new IPEndPoint(IPAddress.Loopback, 50001);
+            TCPclientSocket.Connect(TCPserverEP);
+            byte[] buffer = new byte[1024];
+            string poruka = string.Empty;
+       
+
+
+            int brBajta = TCPclientSocket.Receive(buffer);
+            poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+            Console.WriteLine(poruka);
+            Console.WriteLine();
+
+            do
+            {
+                Console.Write("Unesite \"START\" za pocetak kviza: ");
+                poruka = Console.ReadLine();
+
+            } while (poruka.ToLower() != "start");
+
+            byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+            TCPclientSocket.Send(binarnaPoruka);
+
+
+            //pokretanje igara
+
+            Console.Clear();
+
+
+            brBajta = TCPclientSocket.Receive(buffer);
+            
+
+
+            for (int i = 0; i < 1; ++i)
+            {
+
+                brBajta = TCPclientSocket.Receive(buffer);
+                string trenutnaIgra = Encoding.UTF8.GetString(buffer, 0, brBajta);
+
+                Console.WriteLine("Trenutna igra broj " + (i + 1) + ": " + trenutnaIgra);
+
+                if (trenutnaIgra == "ANAGRAM")
+                    while (true)
+                    {
+                        Console.Write("Unesite rec: ");
+                        poruka = Console.ReadLine().Trim().ToLower();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                        TCPclientSocket.Send(binarnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz")
+                        {
+                            Console.WriteLine("cekam izlaz...");
+                            Console.ReadLine();
+                        }
+                    }
+            }
+
+                //try
+                //{
+                //    while (true)
+                //    {
+
+                //        Console.WriteLine("Unesite ime i prezime studenta");
+                //        string ImeIPrezime = Console.ReadLine();
+                //        //Console.WriteLine("Unesite broj poena studenta");
+                //        //student.Poeni = Convert.ToInt32(Console.ReadLine());
+
+
+                //        using (MemoryStream ms = new MemoryStream())
+                //        {
+                //            BinaryFormatter bf = new BinaryFormatter();
+                //            bf.Serialize(ms, ImeIPrezime);
+                //            buffer = ms.ToArray();
+                //            clientSocket.Send(buffer);
+                //        }
+
+                //        Console.WriteLine("Podaci su uspesno poslati! \n\nDa li zelite da posaljete jos? da/ne");
+
+                //        if (Console.ReadLine().ToLower() == "ne")
+                //        {
+                //            break;
+                //        }
+
+                //    }
+
+                //}
+                //catch (SocketException ex)
+                //{
+                //    Console.WriteLine($"Doslo je do greske tokom slanja:\n{ex}");
+                //}
+                Console.WriteLine("Klijent zavrsava sa radom");
+            Console.ReadKey();
+            //TCPclientSocket.Close();
         }
 
     }

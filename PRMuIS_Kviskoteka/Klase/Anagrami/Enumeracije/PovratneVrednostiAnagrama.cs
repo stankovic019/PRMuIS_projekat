@@ -12,6 +12,8 @@ namespace Klase.Anagrami.Enumeracije
         PreviseSlova,
         IspravnaRec,
         NeispravnaRec,
-        VecPogodjeno
+        VecPogodjeno,
+        DrugiIgracPogodio
+        
     }
 }

@@ -122,42 +122,97 @@ namespace Klase.Anagrami.Servisi
         }
 
 
-        public void Igraj()
+        public void Igraj(List<Socket> klijenti, Socket serverSocket)
         {
 
-            while (true)
+            byte[] buffer = new byte[1024];
+            string rec = string.Empty;
+            Igrac trenutniIgrac = null;
+            Socket trenutniSocket = null;
+            StringBuilder sb = new StringBuilder();
+            int izaslaOba = 0;
+            while (izaslaOba != 2) 
             {
-                Console.WriteLine("Bodovi: " + bodovi);
-                Console.WriteLine("Pogodjene reci: " + anagram.getPogodjene() + "/" + anagram.ponudjeneReci.Count);
-                Console.WriteLine("PONUDJENA REC: " + anagram.REC);
-                Console.Write("Unesite rec: ");
-                string rec = Console.ReadLine().Trim().ToLower();
-
-                PovratneVrednostiAnagrama pv = anagram.postojiRec(rec);
-
-                if (pv == PovratneVrednostiAnagrama.IspravnaRec)
+                try
                 {
-                    bodovi += rec.Length;
+
+                    rec = string.Empty;
+                    Console.WriteLine("Poeni: ");
+                    Console.WriteLine($"\t{igrac1.username}: {igrac1.poeniUTrenutnojIgri} ");
+                    Console.WriteLine($"\t{igrac2.username}: {igrac2.poeniUTrenutnojIgri} ");
+                    Console.WriteLine("PONUDJENA REC: " + anagram.REC);
+                    Console.WriteLine();
+                    Console.WriteLine(sb.ToString());
+                    do
+                    {
+                        List<Socket> checkRead = new List<Socket>();
+                        List<Socket> checkError = new List<Socket>();
+
+                        foreach (Socket s in klijenti)
+                        {
+                            checkRead.Add(s);
+                            checkError.Add(s);
+                        }
+
+                        Socket.Select(checkRead, null, checkError, 1000);
+
+                        if (checkRead.Count > 0)
+                        {
+
+                            foreach (Socket s in checkRead)
+                            {
+                                {
+                                    int brBajta = s.Receive(buffer);
+                                    rec = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                                    trenutniSocket = s;
+                                    trenutniIgrac = s == klijenti[0] ? igrac1 : igrac2;
+                                }
+                            }
+                        }
+                    }
+                    while (rec == string.Empty);
+
+                    sb.Append($"{trenutniIgrac.username}: {rec}\n");
+                    Console.WriteLine($"{trenutniIgrac.username}: {rec}\n");
+
+                    PovratneVrednostiAnagrama pv = anagram.postojiRec(rec);
+
+                    if (pv == PovratneVrednostiAnagrama.IspravnaRec)
+                         trenutniIgrac.poeniUTrenutnojIgri += rec.Length;
+                    else if(pv == PovratneVrednostiAnagrama.DrugiIgracPogodio)
+                        trenutniIgrac.poeniUTrenutnojIgri += Convert.ToInt32(Math.Floor(rec.Length * 0.8));
+                    else if (pv == PovratneVrednostiAnagrama.NePostojiSlovo)
+                        Console.WriteLine("Vasa rec koristi slovo koje ne postoji u ponudjenoj reci / ponudjenim recima.");
+                    else if (pv == PovratneVrednostiAnagrama.PreviseSlova)
+                        Console.WriteLine("Vasa rec koristi vise slova nego sto postoji u ponudjenoj reci / ponudjenim recima.");
+                    else if (pv == PovratneVrednostiAnagrama.VecPogodjeno)
+                        Console.WriteLine("Uneta rec je vec pogodjena.");
+                    else if (pv == PovratneVrednostiAnagrama.NeispravnaRec)
+                        Console.WriteLine("Uneta rec nije ispravna.");
+
+                    if (pv != PovratneVrednostiAnagrama.IspravnaRec && pv != PovratneVrednostiAnagrama.DrugiIgracPogodio)
+                        trenutniIgrac.addPenalty();
+
+                    if (trenutniIgrac.getPenalties() == 3 || rec == "izlaz")
+                    {
+                        trenutniSocket.Send(Encoding.UTF8.GetBytes("izlaz"));
+                        izaslaOba++;
+                    }
+                    else
+                        trenutniSocket.Send(Encoding.UTF8.GetBytes(rec));
+                    
+
+
+                    Thread.Sleep(1000);
                     Console.Clear();
-                    continue;
                 }
 
-
-
-                if (pv == PovratneVrednostiAnagrama.NePostojiSlovo)
-                    Console.WriteLine("Vasa rec koristi slovo koje ne postoji u ponudjenoj reci / ponudjenim recima.");
-                else if (pv == PovratneVrednostiAnagrama.PreviseSlova)
-                    Console.WriteLine("Vasa rec koristi vise slova nego sto postoji u ponudjenoj reci / ponudjenim recima.");
-                else if (pv == PovratneVrednostiAnagrama.VecPogodjeno)
-                    Console.WriteLine("Uneta rec je vec pogodjena.");
-                else if (pv == PovratneVrednostiAnagrama.NeispravnaRec)
-                    Console.WriteLine("Uneta rec nije ispravna.");
-
-
-                Thread.Sleep(1000);
-                Console.Clear();
+                catch (Exception e) { }
             }
 
+            //mozda poslati poruku da se ide na drugu igru
         }
     }
 }
+
+

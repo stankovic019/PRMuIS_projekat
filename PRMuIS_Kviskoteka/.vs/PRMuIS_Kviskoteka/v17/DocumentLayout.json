@@ -3,16 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\prmuis_kviskoteka\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj|solutionrelative:prmuis_kviskoteka\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CE630D07-F99D-4FBE-84CC-7E7072EEC881}|PRMuIS_Kviskoteka_Client\\PRMuIS_Kviskoteka_Client.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\prmuis_kviskoteka_client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CE630D07-F99D-4FBE-84CC-7E7072EEC881}|PRMuIS_Kviskoteka_Client\\PRMuIS_Kviskoteka_Client.csproj|solutionrelative:prmuis_kviskoteka_client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\pitanja i odgovori\\servisi\\igrapitanjaiodgovora.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\pitanja i odgovori\\servisi\\igrapitanjaiodgovora.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\prmuis_kviskoteka\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj|solutionrelative:prmuis_kviskoteka\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,21 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 280,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "IgraPitanjaIOdgovora.cs",
-              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
-              "RelativeDocumentMoniker": "Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
-              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
-              "RelativeToolTip": "Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
-              "ViewState": "AgIAAEoAAAAAAAAAAAAgwHMAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-09T15:14:35.053Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -44,27 +27,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Server.cs",
-              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Server.cs",
-              "RelativeDocumentMoniker": "PRMuIS_Kviskoteka\\Server.cs",
-              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Server.cs",
-              "RelativeToolTip": "PRMuIS_Kviskoteka\\Server.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAhwDMAAABHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T16:39:24.191Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Client.cs",
               "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Client\\Client.cs",
               "RelativeDocumentMoniker": "PRMuIS_Kviskoteka_Client\\Client.cs",
               "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Client\\Client.cs",
               "RelativeToolTip": "PRMuIS_Kviskoteka_Client\\Client.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAAACcAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAowO0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-08T16:39:17.155Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Server.cs",
+              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Server.cs",
+              "RelativeDocumentMoniker": "PRMuIS_Kviskoteka\\Server.cs",
+              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Server.cs",
+              "RelativeToolTip": "PRMuIS_Kviskoteka\\Server.cs",
+              "ViewState": "AgIAAEMBAAAAAAAAAAAswFoBAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T16:39:24.191Z",
               "EditorCaption": ""
             }
           ]
