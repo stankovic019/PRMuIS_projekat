@@ -47,8 +47,8 @@ namespace PRMuIS_Kviskoteka
         static void UDPKonekcija() {
 
             Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
-            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
+            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
+            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
             UDPserverSocket.Bind(UDPserverEP);
 
             Console.WriteLine($"UDP Server je pokrenut i ceka poruku na: {UDPserverEP}");
@@ -371,7 +371,7 @@ namespace PRMuIS_Kviskoteka
 
 
 
-                            for (int i = 0; i < 1; ++i)
+                            for (int i = 1; i < 2; ++i)
                             {
                                 Thread.Sleep(2000);
                                 string igra = igraci[0].getIgra(i); //sve jedno je, iste igre igraju
@@ -392,6 +392,22 @@ namespace PRMuIS_Kviskoteka
                                     }
                                     continue;
                                 }
+                                //else if(igra == "po")
+                                //{
+                                //    IgraPitanjaIOdgovora pitanjaIodg = new IgraPitanjaIOdgovora(igraci[0], igraci[1]);
+                                //    poruka = "PITANJA I ODGOVORI";
+                                //    binarnaPoruka =  Encoding.UTF8.GetBytes(poruka);
+                                //    foreach (Socket s in klijenti)
+                                //        s.Send(binarnaPoruka);
+                                //    pitanjaIodg.IgrajDvaIgraca(klijenti, serverSocket);
+                                //    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
+                                //    foreach (Igrac ig in igraci)
+                                //    {
+                                //        Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
+                                //        ig.dodeliPoene(i);
+                                //    }
+                                //    continue;
+                                //}
 
                             }
                         }

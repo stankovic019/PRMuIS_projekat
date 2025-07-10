@@ -42,8 +42,8 @@ namespace PRMuIS_Kviskoteka_Client
         static void UDPKonekcija()
         {
             Socket UDPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP:port
-            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP:port
+            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP:port
+            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP:port
             EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             while (true)
@@ -230,7 +230,7 @@ namespace PRMuIS_Kviskoteka_Client
             
 
 
-            for (int i = 0; i < 1; ++i)
+            for (int i = 1; i < 2; ++i)
             {
 
                 brBajta = TCPclientSocket.Receive(buffer);
@@ -239,6 +239,7 @@ namespace PRMuIS_Kviskoteka_Client
                 Console.WriteLine("Trenutna igra broj " + (i + 1) + ": " + trenutnaIgra);
 
                 if (trenutnaIgra == "ANAGRAM")
+                {
                     while (true)
                     {
                         Console.Write("Unesite rec: ");
@@ -253,8 +254,26 @@ namespace PRMuIS_Kviskoteka_Client
                             Console.ReadLine();
                         }
                     }
+                }
+                //else if (trenutnaIgra == "PITANJA I ODGOVORI")
+                //{
+                //    while (true)
+                //    {
+                //        Console.Write("Unesite slovo(a/b): ");
+                //        poruka = Console.ReadLine().Trim().ToLower();
+                //        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                //        TCPclientSocket.Send(binarnaPoruka);
+                //        brBajta = TCPclientSocket.Receive(buffer);
+                //        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                //        if (poruka == "izlaz")
+                //        {
+                //            Console.WriteLine("cekam izlaz...");
+                //            Console.ReadLine();
+                //        }
+                //    }
+                //}
             }
-
+                // ===================== OVO NE IDE ====================================
                 //try
                 //{
                 //    while (true)
