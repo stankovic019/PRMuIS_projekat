@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Klase.Pitanja_i_Odgovori.Servisi;
 using Klase.Asocijacije.Servisi;
 using System.Diagnostics;
+using Klase.General.Servisi;
 #pragma warning disable SYSLIB0011
 
 namespace PRMuIS_Kviskoteka
@@ -96,6 +97,7 @@ namespace PRMuIS_Kviskoteka
                             foreach(EndPoint ep in multiplayerEndPoints)
                                 brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, ep);
                             TCPKonekcijaDvaKorisnika();
+                            break;
 
                         }
                         else
@@ -259,7 +261,7 @@ namespace PRMuIS_Kviskoteka
 
 
 
-            List<Socket> klijenti = new List<Socket>(); // Pravimo posebnu listu za klijentske sokete kako nam je ne bi obrisala Select funkcija
+            List<Socket> klijenti = new List<Socket>(); // Pravimo posebnu listu za klijentske sokete 
 
             byte[] buffer = new byte[1024];
             string poruka = string.Empty;
@@ -333,46 +335,19 @@ namespace PRMuIS_Kviskoteka
                                         Console.WriteLine("Cekam drugog igraca...");
                                 }
                             }
-                            else
-                            {
-
-                                Console.WriteLine("nigga");
-                                //if (igra == "po")
-                                //{
-                                //    IgraPitanjaIOdgovora po = new IgraPitanjaIOdgovora(igrac);
-                                //    poruka = "PITANJA I ODGOVORI";
-                                //    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                                //    s.Send(binarnaPoruka);
-                                //    po.Igraj(s);
-                                //    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori': " + igrac.poeniUTrenutnojIgri);
-                                //    igrac.dodeliPoene(i);
-                                //    continue;
-                                //}
-
-                                //if (igra == "as")
-                                //{
-                                //    IgraAsocijacija asocijacija = new IgraAsocijacija(igrac);
-                                //    poruka = "ASOCIJACIJE";
-                                //    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                                //    s.Send(binarnaPoruka);
-                                //    asocijacija.treningIgra(s);
-                                //    Console.WriteLine("Ukupni poeni u igri 'Asocijacije': " + igrac.poeniUTrenutnojIgri);
-                                //    igrac.dodeliPoene(i);
-                                //    continue;
-
-                            }
-
+    
                         }
                         if (starting == 2)
                         {
                             foreach (Socket s in klijenti)
                                 s.Send(Encoding.UTF8.GetBytes("start"));
 
-
-
-
-                            for (int i = 0; i < 1; ++i)
+                           UlaganjeKviska kvisko = new UlaganjeKviska(igraci[0], igraci[1]);
+                            for (int i = 0; i < 3; ++i)
                             {
+
+                                kvisko.Ulozi(klijenti, serverSocket, i);
+
                                 Thread.Sleep(2000);
                                 string igra = igraci[0].getIgra(i); //sve jedno je, iste igre igraju
                                 Console.Clear();
@@ -388,12 +363,34 @@ namespace PRMuIS_Kviskoteka
                                     foreach (Igrac ig in igraci)
                                     {
                                         Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
-                                        ig.dodeliPoene(i); 
+                                        ig.dodeliPoene(i);
                                     }
                                     continue;
                                 }
 
+
+
+                                if (igra == "as")
+                                {
+                                    IgraAsocijacija asocijacija = new IgraAsocijacija(igraci[0], igraci[1]);
+                                    poruka = "ASOCIJACIJE";
+                                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                                    foreach (Socket s in klijenti)
+                                        s.Send(binarnaPoruka);
+                                    asocijacija.Igraj(klijenti, serverSocket);
+                                    Console.Clear();
+                                    Console.WriteLine("Ukupni poeni u igri 'Asocijacije': ");
+                                    foreach (Igrac ig in igraci)
+                                    {
+                                        Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
+                                        ig.dodeliPoene(i);
+                                    }
+                                    Thread.Sleep(2000);
+                                    Console.Clear();
+                                    continue;
+                                }
                             }
+                            break;
                         }
                         checkRead.Clear();
                     }
@@ -405,13 +402,39 @@ namespace PRMuIS_Kviskoteka
             }
 
 
-            foreach (Socket s in klijenti)
-            {
-                s.Send(Encoding.UTF8.GetBytes("Server je zavrsio sa radom"));
-                s.Close();
-            }
+            foreach (Igrac i in igraci)
+                Console.WriteLine(i + "\n");
 
-            Console.WriteLine("Server zavrsava sa radom");
+
+            if (igraci[0].ukupnoPoena > igraci[1].ukupnoPoena)
+            {
+                klijenti[0].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
+                klijenti[1].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+            }
+            else if(igraci[0].ukupnoPoena > igraci[1].ukupnoPoena)
+            {
+                klijenti[1].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
+                klijenti[0].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+            }
+            else
+            {
+                if (igraci[0].poeniSaKviskom > igraci[1].poeniSaKviskom)
+                {
+                    klijenti[0].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
+                    klijenti[1].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                }
+                else if (igraci[0].poeniSaKviskom < igraci[1].poeniSaKviskom)
+                {
+                    klijenti[1].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
+                    klijenti[0].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                }
+                else
+                {
+                    klijenti[1].Send(Encoding.UTF8.GetBytes("Nereseno je."));
+                    klijenti[0].Send(Encoding.UTF8.GetBytes("Nereseno je."));
+                }
+            }
+                Console.WriteLine("Server zavrsava sa radom");
             Console.ReadKey();
             serverSocket.Close();
 

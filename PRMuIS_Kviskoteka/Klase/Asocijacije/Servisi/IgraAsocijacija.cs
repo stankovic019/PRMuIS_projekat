@@ -228,144 +228,241 @@ namespace Klase.Asocijacije.Servisi
         }
 
 
-        public void Igraj()
+        public void Igraj(List<Socket> klijenti, Socket serverSocket)
         {
+            byte[] buffer = new byte[1024];
+            string komanda = string.Empty;
             bool otvorioPolje = false;
             bool otvorenaSvaPolja = false;
-            Igrac trenIgrac = new Random().Next(1, 3) % 2 == 0 ? igrac1 : igrac2; //random ko igra prvi
+
+            Socket trenSocket = new Random().Next(1, 3) % 2 == 0 ? klijenti[0] : klijenti[1]; //random ko igra prvi
+            Socket sledSocket = trenSocket == klijenti[0] ? klijenti[1] : klijenti[0]; //random ko igra prvi
+            
+            Igrac trenIgrac = trenSocket == klijenti[0] ? igrac1 : igrac2; 
+            Igrac sledIgrac = trenIgrac == igrac1 ? igrac2 : igrac1; 
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("ZA OTVARANJE POLJA UNESITE KOMANDU U FORMATU: 'A1'\n");
+            sb.Append("ZA POGADJANJE KONAČNOG REŠENJA KOLONE/ASOCIJACIJE UNESITE KOMANDU U FORMATU: " + "\n'A:[konacno_resenje]'/'K:[konacno_resenje]'\n");
+            sb.Append("ZA PRESKAKANJE POTEZA UNESITE KOMANDU: 'DALJE'\n");
+            byte[] binarnaPoruka;
+            binarnaPoruka = Encoding.UTF8.GetBytes(sb.ToString());
+
+            foreach (Socket client in klijenti) 
+                client.Send(binarnaPoruka);
 
             //jedna iteracija igre
             while (!asocijacija.pogodjenoKonacno)
             {
-                otvorenaSvaPolja = asocijacija.otvorenaSvaPolja();
-                Console.WriteLine($"IGRAC: {trenIgrac.username} POENI: {trenIgrac.poeniUTrenutnojIgri} ");
-                Console.WriteLine(asocijacija.ToString());
-                Console.WriteLine();
-                Console.WriteLine("ZA OTVARANJE POLJA UNESITE KOMANDU U FORMATU: 'A1'");
-                Console.WriteLine("ZA POGADJANJE KONAČNOG REŠENJA KOLONE/ASOCIJACIJE UNESITE KOMANDU U FORMATU: " + "\n'A:[konacno_resenje]'/'K:[konacno_resenje]'");
-                Console.WriteLine("ZA PRESKAKANJE POTEZA UNESITE KOMANDU: 'DALJE'");
-                Console.WriteLine();
-                Console.Write("Unesite komandu: ");
+                try {
+                    komanda = string.Empty;
+                    otvorenaSvaPolja = asocijacija.otvorenaSvaPolja();
+                    Console.WriteLine($"IGRAC: {trenIgrac.username} POENI: {trenIgrac.poeniUTrenutnojIgri} ");
+                    Console.WriteLine(asocijacija.ToString());
+                    Console.WriteLine();
+                    //Console.Write("Unesite komandu: ");
 
-                string komanda = Console.ReadLine().ToUpper();
-
-                if (komanda == "EXIT")
-                {
-                    asocijacija.endGame();
-                    Console.Clear();
-                    break;
-                }
-
-                PovratnaVrednostUnosa pvu = checkUnos(komanda);
-
-                if (pvu == PovratnaVrednostUnosa.NeispravanUnos)
-                {
-                    Console.WriteLine("NEISPRAVAN UNOS. POKUSAJTE PONOVO.");
-                    Thread.Sleep(1000);
-                    Console.Clear();
-                    continue; //continue jer treba da ostane na istom igracu
-                }
-
-                //ako je otvorio polje ovaj potez
-                if (otvorioPolje && pvu == PovratnaVrednostUnosa.Polje)
-                {
-                    Console.WriteLine("OTVORILI STE POLJE OVAJ POTEZ.");
-                    Thread.Sleep(1000);
-                    Console.Clear();
-                    continue; //continue jer treba da bude isti igrac
-                }
-
-                //ako nije otvorio polje u ovom potezu, prvo mora to da uradi
-                if (!otvorioPolje && !otvorenaSvaPolja)
-                {
-                    if (pvu == PovratnaVrednostUnosa.Polje)
+                    if (trenIgrac.getPenalties() == 3)
                     {
-                        if (!asocijacija.findCollon(komanda))
+                        if (sledIgrac.getPenalties() == 3)
                         {
-                            Console.WriteLine("POLJE JE VEC OTVORENO. UNESITE PONOVO.");
-                            Thread.Sleep(1000);
-                            Console.Clear();
-                            continue; //continue jer treba da ostane na istom igracu
+                            asocijacija.endGame();
+                            break;
                         }
-                        else
-                            otvorioPolje = true;
+
+                        Socket tempS = trenSocket;
+                        trenSocket = sledSocket;
+                        sledSocket = tempS;
+                        Igrac tempI = trenIgrac;
+                        trenIgrac = sledIgrac;
+                        sledIgrac = tempI;
+                        Console.Clear();
+                        continue;
                     }
-                    else
+                        
+
+                    trenSocket.Send(Encoding.UTF8.GetBytes("1Vi ste na potezu.\n"));
+                    sledSocket.Send(Encoding.UTF8.GetBytes("0Protivnik je na potezu.\n"));
+
+                    do
                     {
-                        Console.WriteLine("OTVORITE PRVO POLJE PRE POGADJANJA.");
+                        List<Socket> checkRead = new List<Socket>();
+                        List<Socket> checkError = new List<Socket>();
+
+                        foreach (Socket s in klijenti)
+                        {
+                            checkRead.Add(s);
+                            checkError.Add(s);
+                        }
+
+                        Socket.Select(checkRead, null, checkError, 1000);
+
+                        if (checkRead.Count > 0)
+                        {
+
+                            foreach (Socket s in checkRead)
+                            {
+                                {
+                                    int brBajta = s.Receive(buffer);
+                                    komanda = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                                    komanda = komanda.ToUpper();
+                                }
+                            }
+                        }
+                    } while (komanda == string.Empty);
+
+                    PovratnaVrednostUnosa pvu = checkUnos(komanda);
+
+                    if (pvu == PovratnaVrednostUnosa.NeispravanUnos)
+                    {
+                        Console.WriteLine("NEISPRAVAN UNOS. POKUSAJTE PONOVO.");
                         Thread.Sleep(1000);
                         Console.Clear();
+                        trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                        sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
                         continue; //continue jer treba da ostane na istom igracu
                     }
-                }
 
-                if (pvu == PovratnaVrednostUnosa.Dalje)
-                {
-                    otvorioPolje = false;
-                    trenIgrac = trenIgrac.username == igrac1.username ? igrac2 : igrac1;
-                }
-
-                if (pvu == PovratnaVrednostUnosa.KonacnoKolona)
-                {
-                    bool pogodjeno;
-                    int poeni;
-                    (pogodjeno, poeni) = asocijacija.guessKonacnoUKoloni(komanda);
-
-                    //znaci nije otvoreno ni jedno polje u koloni
-                    if (poeni == -1)
+                    //ako je otvorio polje ovaj potez
+                    if (otvorioPolje && pvu == PovratnaVrednostUnosa.Polje)
                     {
-                        Console.WriteLine("NIJE OTVORENO NI JEDNO POLJE U KOLONI.");
+                        Console.WriteLine("OTVORILI STE POLJE OVAJ POTEZ.");
                         Thread.Sleep(1000);
+                        Console.Clear();
+                        trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                        sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                        continue; //continue jer treba da bude isti igrac
+                    }
+
+                    //ako nije otvorio polje u ovom potezu, prvo mora to da uradi
+                    if (!otvorioPolje && !otvorenaSvaPolja)
+                    {
+                        if (pvu == PovratnaVrednostUnosa.Polje)
+                        {
+                            if (!asocijacija.findCollon(komanda))
+                            {
+                                Console.WriteLine("POLJE JE VEC OTVORENO. UNESITE PONOVO.");
+                                Thread.Sleep(1000);
+                                Console.Clear();
+                                trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                                sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                                
+                                continue; //continue jer treba da ostane na istom igracu
+                            }
+                            else
+                                otvorioPolje = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("OTVORITE PRVO POLJE PRE POGADJANJA.");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            continue; //continue jer treba da ostane na istom igracu
+                        }
+                    }
+
+                    if (pvu == PovratnaVrednostUnosa.Dalje)
+                    {
+                        otvorioPolje = false;
+                        Socket tempS = trenSocket;
+                        trenSocket = sledSocket;
+                        sledSocket = tempS;
+                        Igrac tempI = trenIgrac;
+                        trenIgrac = sledIgrac;
+                        sledIgrac = tempI;
+                        trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                        sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
                         Console.Clear();
                         continue;
                     }
 
-                    if (poeni == -2)
+                    if (pvu == PovratnaVrednostUnosa.KonacnoKolona)
                     {
-                        Console.WriteLine("RESENJE JE VEC POGODJENO.");
-                        Thread.Sleep(1000);
-                        Console.Clear();
-                        continue;
+                        bool pogodjeno;
+                        int poeni;
+                        (pogodjeno, poeni) = asocijacija.guessKonacnoUKoloni(komanda);
+
+                        //znaci nije otvoreno ni jedno polje u koloni
+                        if (poeni == -1)
+                        {
+                            Console.WriteLine("NIJE OTVORENO NI JEDNO POLJE U KOLONI.");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            continue;
+                        }
+
+                        if (poeni == -2)
+                        {
+                            Console.WriteLine("RESENJE JE VEC POGODJENO.");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                            continue;
+                        }
+
+                        if (!pogodjeno)
+                        {
+                            Console.WriteLine("Konačno resenje kolone nije pogodjeno.");
+                            Thread.Sleep(1000);
+                            //sledeci igrac
+                            Socket tempS = trenSocket;
+                            trenSocket = sledSocket;
+                            sledSocket = tempS;
+                            Igrac tempI = trenIgrac;
+                            trenIgrac = sledIgrac;
+                            sledIgrac = tempI;
+                            otvorioPolje = false;
+ 
+                        }
+
+                        trenIgrac.poeniUTrenutnojIgri += poeni; //ako i nije pogodio, sabrace se sa nulom
                     }
 
-                    if (!pogodjeno)
+                    if (pvu == PovratnaVrednostUnosa.KonacnoAsocijacija)
                     {
-                        Console.WriteLine("Konačno resenje kolone nije pogodjeno.");
-                        Thread.Sleep(1000);
-                        //sledeci igrac
-                        trenIgrac = trenIgrac.username == igrac1.username ? igrac2 : igrac1;
-                        otvorioPolje = false;
+                        bool pogodjeno;
+                        int poeni;
+                        (pogodjeno, poeni) = asocijacija.tryKonacno(komanda);
 
+                        if (!pogodjeno)
+                        {
+                            Console.WriteLine("Konačno resenje asocijacije nije pogodjeno.");
+                            trenIgrac.addPenalty();
+                            
+                            //sledeci igrac
+                            Thread.Sleep(1000);
+                            Socket tempS = trenSocket;
+                            trenSocket = sledSocket;
+                            sledSocket = tempS;
+                            Igrac tempI = trenIgrac;
+                            trenIgrac = sledIgrac;
+                            sledIgrac = tempI;
+                            otvorioPolje = false;
+                          
+                        }
+
+                        trenIgrac.poeniUTrenutnojIgri += poeni;
                     }
 
-                    trenIgrac.poeniUTrenutnojIgri += poeni; //ako i nije pogodio, sabrace se sa nulom
+                    trenSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                    sledSocket.Send(Encoding.UTF8.GetBytes(komanda));
+                    Console.Clear();
                 }
-
-                if (pvu == PovratnaVrednostUnosa.KonacnoAsocijacija)
-                {
-                    bool pogodjeno;
-                    int poeni;
-                    (pogodjeno, poeni) = asocijacija.tryKonacno(komanda);
-
-                    if (!pogodjeno)
-                    {
-                        Console.WriteLine("Konačno resenje asocijacije nije pogodjeno.");
-                        //sledeci igrac
-                        Thread.Sleep(1000);
-                        trenIgrac = trenIgrac.username == igrac1.username ? igrac2 : igrac1;
-                        otvorioPolje = false;
-                    }
-
-                    trenIgrac.poeniUTrenutnojIgri += poeni;
-                }
-
-                Console.Clear();
+                catch(Exception ex){ }
             }
 
-            Console.WriteLine($"IGRAC: {igrac1.username} POENI: {igrac1.poeniUTrenutnojIgri} ");
-            Console.WriteLine($"IGRAC: {igrac2.username} POENI: {igrac2.poeniUTrenutnojIgri} ");
-            Console.WriteLine();
+            Console.Clear();
+            
+            trenSocket.Send(Encoding.UTF8.GetBytes("izlaz"));
+            sledSocket.Send(Encoding.UTF8.GetBytes("izlaz"));
+
             Console.WriteLine(asocijacija.ToString());
+            Console.ReadLine();
         }
     }
 }

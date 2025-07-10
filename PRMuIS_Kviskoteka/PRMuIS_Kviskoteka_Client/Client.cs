@@ -232,6 +232,24 @@ namespace PRMuIS_Kviskoteka_Client
 
             for (int i = 0; i < 1; ++i)
             {
+                Console.Clear();
+
+                brBajta = TCPclientSocket.Receive(buffer);
+                string kvisko = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                
+                if(kvisko == "0")
+                    TCPclientSocket.Send(Encoding.UTF8.GetBytes("0"));
+                else
+                {
+                    string odg;
+                    do
+                    {
+                        Console.Write("Da li zelite da ulozite kviska pre pocetka igre? (da/ne): ");
+                        odg = Console.ReadLine().ToLower();
+                    } while (odg != "da" && odg != "ne");
+                    TCPclientSocket.Send(Encoding.UTF8.GetBytes(odg));
+                }
+
 
                 brBajta = TCPclientSocket.Receive(buffer);
                 string trenutnaIgra = Encoding.UTF8.GetString(buffer, 0, brBajta);
@@ -253,44 +271,42 @@ namespace PRMuIS_Kviskoteka_Client
                             Console.ReadLine();
                         }
                     }
+                else if (trenutnaIgra == "ASOCIJACIJE")
+                {
+                    brBajta = TCPclientSocket.Receive(buffer);
+                    string uvodnaPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                    while (true)
+                    {
+                        Console.WriteLine(uvodnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz")  break;
+                        bool mojPotez = poruka[0] == '1' ? true : false;
+
+                        Console.WriteLine(poruka.Substring(1));
+
+                        if (mojPotez)
+                        {
+                            Console.Write("Unesite komandu: ");
+                            poruka = Console.ReadLine().Trim().ToLower();
+                            binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                            TCPclientSocket.Send(binarnaPoruka);
+                        }
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        Console.Clear();
+                    }
+                }
+
             }
 
-                //try
-                //{
-                //    while (true)
-                //    {
-
-                //        Console.WriteLine("Unesite ime i prezime studenta");
-                //        string ImeIPrezime = Console.ReadLine();
-                //        //Console.WriteLine("Unesite broj poena studenta");
-                //        //student.Poeni = Convert.ToInt32(Console.ReadLine());
-
-
-                //        using (MemoryStream ms = new MemoryStream())
-                //        {
-                //            BinaryFormatter bf = new BinaryFormatter();
-                //            bf.Serialize(ms, ImeIPrezime);
-                //            buffer = ms.ToArray();
-                //            clientSocket.Send(buffer);
-                //        }
-
-                //        Console.WriteLine("Podaci su uspesno poslati! \n\nDa li zelite da posaljete jos? da/ne");
-
-                //        if (Console.ReadLine().ToLower() == "ne")
-                //        {
-                //            break;
-                //        }
-
-                //    }
-
-                //}
-                //catch (SocketException ex)
-                //{
-                //    Console.WriteLine($"Doslo je do greske tokom slanja:\n{ex}");
-                //}
-                Console.WriteLine("Klijent zavrsava sa radom");
+            Console.Clear();
+            brBajta = TCPclientSocket.Receive(buffer);
+            Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, brBajta));
             Console.ReadKey();
-            //TCPclientSocket.Close();
+            
+            Console.WriteLine("TCP Klijent zavrsava sa radom");
+            Console.ReadKey();
+           
         }
 
     }

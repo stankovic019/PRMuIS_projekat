@@ -18,9 +18,11 @@ namespace Klase.General.Modeli
 
         private string[] igre;
         private int[] poeniUIgrama;
+        public int ukupnoPoena { get; private set; } = 0;
 
-        private bool kvisko;
-        private int kviskoIdx;
+        public bool kvisko { get; private set; } = false;
+        public int kviskoIdx { get; private set; } = -1;
+        public int poeniSaKviskom { get; private set; } = 0;
 
         private List<bool> penalties = new List<bool>();
 
@@ -76,7 +78,10 @@ namespace Klase.General.Modeli
         {
             poeniUIgrama[idx] = poeniUTrenutnojIgri;
             if (idx == kviskoIdx)
+            {
                 poeniUIgrama[idx] *= 2;
+                poeniSaKviskom = poeniUIgrama[idx];
+            }
             poeniUTrenutnojIgri = 0;
             penalties.Clear();
         }
@@ -92,7 +97,7 @@ namespace Klase.General.Modeli
 
             sb.Append($"IGRAC: {id} - {username}\n");
             sb.Append("Bodovi po igrama:\n");
-            int ukupno = 0;
+            
             for (int i = 0; i < brojIgara; ++i)
             {
                 if (igre[i] == "an")
@@ -103,10 +108,10 @@ namespace Klase.General.Modeli
                     sb.Append("\tasocijacija: ");
 
                 sb.Append($"{poeniUIgrama[i]}\n");
-                ukupno += poeniUIgrama[i];
+                ukupnoPoena += poeniUIgrama[i];
             }
 
-            sb.Append($"Ukupno poena: {ukupno} ");
+            sb.Append($"Ukupno poena: {ukupnoPoena} ");
             
 
             return sb.ToString();
