@@ -42,8 +42,8 @@ namespace PRMuIS_Kviskoteka_Client
         static void UDPKonekcija()
         {
             Socket UDPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP:port
-            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP:port
+            IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.4"), 50001); //dimitrije IP:port
+            //IPEndPoint UDPdestinationEP = new IPEndPoint(IPAddress.Parse("192.168.0.16"), 50002); //vojin IP:port
             EndPoint UDPposiljaocEP = new IPEndPoint(IPAddress.Any, 0);
 
             while (true)
@@ -230,25 +230,26 @@ namespace PRMuIS_Kviskoteka_Client
             
 
 
-            for (int i = 1; i < 2; ++i)
+            for (int i = 0; i < 3; ++i)
             {
                 Console.Clear();
 
-                brBajta = TCPclientSocket.Receive(buffer);
-                string kvisko = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                //brBajta = TCPclientSocket.Receive(buffer);
+                //string kvisko = Encoding.UTF8.GetString(buffer, 0, brBajta);
                 
-                if(kvisko == "0")
-                    TCPclientSocket.Send(Encoding.UTF8.GetBytes("0"));
-                else
-                {
-                    string odg;
-                    do
-                    {
-                        Console.Write("Da li zelite da ulozite kviska pre pocetka igre? (da/ne): ");
-                        odg = Console.ReadLine().ToLower();
-                    } while (odg != "da" && odg != "ne");
-                    TCPclientSocket.Send(Encoding.UTF8.GetBytes(odg));
-                }
+                //if(kvisko == "0")
+                //    TCPclientSocket.Send(Encoding.UTF8.GetBytes("0"));
+                //else
+                //{
+                //    string odg;
+                //    do
+                //    {
+                //        Console.Write("Da li zelite da ulozite kviska pre pocetka igre? (da/ne): ");
+                //        odg = Console.ReadLine().ToLower();
+                //    } while (odg != "da" && odg != "ne");
+                //    TCPclientSocket.Send(Encoding.UTF8.GetBytes(odg));
+                //    Console.Clear();
+                //}
 
 
                 brBajta = TCPclientSocket.Receive(buffer);
@@ -268,27 +269,26 @@ namespace PRMuIS_Kviskoteka_Client
                         poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
                         if (poruka == "izlaz")
                         {
-                            Console.WriteLine("cekam izlaz...");
-                            Console.ReadLine();
+                            break;
                         }
                     }
-                //else if (trenutnaIgra == "PITANJA I ODGOVORI")
-                //{
-                //    while (true)
-                //    {
-                //        Console.Write("Unesite slovo(a/b): ");
-                //        poruka = Console.ReadLine().Trim().ToLower();
-                //        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
-                //        TCPclientSocket.Send(binarnaPoruka);
-                //        brBajta = TCPclientSocket.Receive(buffer);
-                //        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
-                //        if (poruka == "izlaz")
-                //        {
-                //            Console.WriteLine("cekam izlaz...");
-                //            Console.ReadLine();
-                //        }
-                //    }
-                //}
+                }
+                else if (trenutnaIgra == "PITANJA I ODGOVORI")
+                {
+                    while (true)
+                    {
+                        Console.Write("Unesite slovo(a/b): ");
+                        poruka = Console.ReadLine().Trim().ToLower();
+                        binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                        TCPclientSocket.Send(binarnaPoruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        Console.WriteLine(poruka);
+                        brBajta = TCPclientSocket.Receive(buffer);
+                        poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                        if (poruka == "izlaz") break;
+                    }
+                }
                 else if (trenutnaIgra == "ASOCIJACIJE")
                 {
                     brBajta = TCPclientSocket.Receive(buffer);
@@ -298,7 +298,7 @@ namespace PRMuIS_Kviskoteka_Client
                         Console.WriteLine(uvodnaPoruka);
                         brBajta = TCPclientSocket.Receive(buffer);
                         poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
-                        if (poruka == "izlaz")  break;
+                        if (poruka == "izlaz") break;
                         bool mojPotez = poruka[0] == '1' ? true : false;
 
                         Console.WriteLine(poruka.Substring(1));

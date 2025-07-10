@@ -4,6 +4,7 @@ using Klase.General.Modeli;
 using Klase.Pitanja_i_Odgovori.Modeli;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -105,7 +106,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
             }
 
             IzaberiIPromesajPitanja();
-            indeksTrenutnogPitanja = -1;
+           
         }
 
         private void IzaberiIPromesajPitanja()
@@ -147,7 +148,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
         public bool PostaviSledecePitanje()
         {
-            indeksTrenutnogPitanja++;
+            
             if (indeksTrenutnogPitanja == pitanjaRedosled.Count)
                 return false;
 
@@ -234,12 +235,8 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
         {
             byte[] buffer = new byte[1024];
 
-            while (true)
+            while (PostaviSledecePitanje())
             {
-                bool imaSledecePitanje = PostaviSledecePitanje();
-                if (!imaSledecePitanje)
-                    break;  // Nema više pitanja, izlaz iz igre
-
                 Console.Clear();
 
                 // Ispis poena i pitanja
@@ -250,36 +247,26 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                 Console.WriteLine("a) DA");
                 Console.WriteLine("b) NE");
 
-                // Šalji pitanje oba klijenta
-                byte[] pitanjeBajtovi = Encoding.UTF8.GetBytes($"Pitanje: {pitanjaIOdgr.TekucePitanje}\na) DA\nb) NE");
-                foreach (var klijent in klijenti)
-                {
-                    klijent.Send(pitanjeBajtovi);
-                }
-
                 // Čekaj odgovore oba klijenta i sakupljaj ih
                 Dictionary<Socket, string> odgovori = new Dictionary<Socket, string>();
                 while (odgovori.Count < klijenti.Count)
                 {
-                    List<Socket> readyList = new List<Socket>(klijenti);
+                    List<Socket> readyList = new List<Socket>();
+
+                    foreach (Socket s in klijenti)
+                        readyList.Add(s);
+
                     Socket.Select(readyList, null, null, 1000000);
 
-                    foreach (var s in readyList)
+                    foreach (Socket s in readyList)
                     {
-                        if (!odgovori.ContainsKey(s))
-                        {
                             int brBajta = s.Receive(buffer);
                             string odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta).Trim().ToLower();
                             odgovori[s] = odgovor;
+                        
+                       
                             string potvrda = "Odgovor primljen. Sačekaj dok drugi igrač odgovori...";
                             s.Send(Encoding.UTF8.GetBytes(potvrda));
-
-                        }
-                        else
-                        {
-                            if (s.Available > 0)
-                                s.Receive(buffer);
-                        }
                     }
                 }
 
@@ -300,9 +287,17 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                         Console.WriteLine($"{igrac.username} je odgovorio: NETACNO!");
                     }
                 }
+
+                if(indeksTrenutnogPitanja++ < 4)
+                    foreach (Socket s in klijenti)
+                        s.Send(Encoding.UTF8.GetBytes("continue"));
                 
-                Thread.Sleep(2000);
+
+               Thread.Sleep(2000);
             }
+            foreach (Socket s in klijenti)
+                s.Send(Encoding.UTF8.GetBytes("izlaz"));
+
         }
 
 
@@ -463,7 +458,7 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
         //        Thread.Sleep(2000);
         //        //Console.Clear();
-        //    }
-        //}
+    //        }
+    //    }
     }
 }

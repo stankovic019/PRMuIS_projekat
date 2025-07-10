@@ -48,8 +48,8 @@ namespace PRMuIS_Kviskoteka
         static void UDPKonekcija() {
 
             Socket UDPserverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
-            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
+            IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50001); //dimitrije ip/port
+            //IPEndPoint UDPserverEP = new IPEndPoint(IPAddress.Any, 50002); //vojin ip/port
             UDPserverSocket.Bind(UDPserverEP);
 
             Console.WriteLine($"UDP Server je pokrenut i ceka poruku na: {UDPserverEP}");
@@ -346,9 +346,8 @@ namespace PRMuIS_Kviskoteka
                             for (int i = 0; i < 3; ++i)
                             {
 
-                                kvisko.Ulozi(klijenti, serverSocket, i);
+                                //kvisko.Ulozi(klijenti, serverSocket, i);
 
-                                Thread.Sleep(2000);
                                 string igra = igraci[0].getIgra(i); //sve jedno je, iste igre igraju
                                 Console.Clear();
                                 if (igra == "an")
@@ -365,28 +364,28 @@ namespace PRMuIS_Kviskoteka
                                         Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
                                         ig.dodeliPoene(i);
                                     }
+                                    Thread.Sleep(2000);
                                     continue;
                                 }
-                                //else if(igra == "po")
-                                //{
-                                //    IgraPitanjaIOdgovora pitanjaIodg = new IgraPitanjaIOdgovora(igraci[0], igraci[1]);
-                                //    poruka = "PITANJA I ODGOVORI";
-                                //    binarnaPoruka =  Encoding.UTF8.GetBytes(poruka);
-                                //    foreach (Socket s in klijenti)
-                                //        s.Send(binarnaPoruka);
-                                //    pitanjaIodg.IgrajDvaIgraca(klijenti, serverSocket);
-                                //    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
-                                //    foreach (Igrac ig in igraci)
-                                //    {
-                                //        Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
-                                //        ig.dodeliPoene(i);
-                                //    }
-                                //    continue;
-                                //}
+                                else if (igra == "po")
+                                {
+                                    IgraPitanjaIOdgovora pitanjaIodg = new IgraPitanjaIOdgovora(igraci[0], igraci[1]);
+                                    poruka = "PITANJA I ODGOVORI";
+                                    binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
+                                    foreach (Socket s in klijenti)
+                                        s.Send(binarnaPoruka);
+                                    pitanjaIodg.IgrajDvaIgraca(klijenti, serverSocket);
+                                    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
+                                    foreach (Igrac ig in igraci)
+                                    {
+                                        Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
+                                        ig.dodeliPoene(i);
+                                    }
+                                    Thread.Sleep(2000);
+                                    continue;
+                                }
 
-
-
-                                if (igra == "as")
+                                else if (igra == "as")
                                 {
                                     IgraAsocijacija asocijacija = new IgraAsocijacija(igraci[0], igraci[1]);
                                     poruka = "ASOCIJACIJE";

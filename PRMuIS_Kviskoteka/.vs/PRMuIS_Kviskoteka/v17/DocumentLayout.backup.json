@@ -7,12 +7,24 @@
       "RelativeMoniker": "D:0:0:{C9FC0819-B94E-47C6-B0B2-6F198C54D148}|PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Server.csproj|solutionrelative:prmuis_kviskoteka\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\general\\modeli\\igrac.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\general\\modeli\\igrac.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\pitanja i odgovori\\servisi\\igrapitanjaiodgovora.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\pitanja i odgovori\\servisi\\igrapitanjaiodgovora.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CE630D07-F99D-4FBE-84CC-7E7072EEC881}|PRMuIS_Kviskoteka_Client\\PRMuIS_Kviskoteka_Client.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\prmuis_kviskoteka_client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CE630D07-F99D-4FBE-84CC-7E7072EEC881}|PRMuIS_Kviskoteka_Client\\PRMuIS_Kviskoteka_Client.csproj|solutionrelative:prmuis_kviskoteka_client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\general\\servisi\\ulaganjekviska.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\general\\servisi\\ulaganjekviska.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\asocijacije\\servisi\\igraasocijacija.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\asocijacije\\servisi\\igraasocijacija.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|c:\\users\\dimitrije\\documents\\github\\prmuis_projekat\\prmuis_kviskoteka\\klase\\general\\modeli\\igrac.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D845466A-DD70-4448-B313-FFA1BD071EB1}|Klase\\Klase.csproj|solutionrelative:klase\\general\\modeli\\igrac.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +34,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 280,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -32,24 +48,59 @@
               "RelativeDocumentMoniker": "PRMuIS_Kviskoteka\\Server.cs",
               "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka\\Server.cs",
               "RelativeToolTip": "PRMuIS_Kviskoteka\\Server.cs",
-              "ViewState": "AgIAAJQBAAAAAAAAAAAAAKIBAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAFkBAAAAAAAAAAAcwFsBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T16:39:24.191Z",
+              "WhenOpened": "2025-07-10T19:32:15.643Z",
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IgraAsocijacija.cs",
+              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Asocijacije\\Servisi\\IgraAsocijacija.cs",
+              "RelativeDocumentMoniker": "Klase\\Asocijacije\\Servisi\\IgraAsocijacija.cs",
+              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Asocijacije\\Servisi\\IgraAsocijacija.cs",
+              "RelativeToolTip": "Klase\\Asocijacije\\Servisi\\IgraAsocijacija.cs",
+              "ViewState": "AgIAAAMBAAAAAAAAAAAtwBsBAABMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-10T19:20:23.966Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UlaganjeKviska.cs",
+              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\General\\Servisi\\UlaganjeKviska.cs",
+              "RelativeDocumentMoniker": "Klase\\General\\Servisi\\UlaganjeKviska.cs",
+              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\General\\Servisi\\UlaganjeKviska.cs",
+              "RelativeToolTip": "Klase\\General\\Servisi\\UlaganjeKviska.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAtwEUAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-10T19:09:48.284Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "IgraPitanjaIOdgovora.cs",
+              "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
+              "RelativeDocumentMoniker": "Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
+              "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
+              "RelativeToolTip": "Klase\\Pitanja i Odgovori\\Servisi\\IgraPitanjaIOdgovora.cs",
+              "ViewState": "AgIAAA8BAAAAAAAAAAAcwCQBAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-10T18:40:15.843Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Igrac.cs",
               "DocumentMoniker": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\General\\Modeli\\Igrac.cs",
               "RelativeDocumentMoniker": "Klase\\General\\Modeli\\Igrac.cs",
               "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\Klase\\General\\Modeli\\Igrac.cs",
               "RelativeToolTip": "Klase\\General\\Modeli\\Igrac.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAiwFIAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAABUAAAAAAAAAAAAawCEAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-10T16:35:04.594Z",
               "EditorCaption": ""
@@ -62,7 +113,7 @@
               "RelativeDocumentMoniker": "PRMuIS_Kviskoteka_Client\\Client.cs",
               "ToolTip": "C:\\Users\\Dimitrije\\Documents\\GitHub\\PRMuIS_projekat\\PRMuIS_Kviskoteka\\PRMuIS_Kviskoteka_Client\\Client.cs",
               "RelativeToolTip": "PRMuIS_Kviskoteka_Client\\Client.cs",
-              "ViewState": "AgIAAOIAAAAAAAAAAAAkwOoAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAOEAAAAAAAAAAAAcwPsAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-10T16:02:20.513Z",
               "EditorCaption": ""

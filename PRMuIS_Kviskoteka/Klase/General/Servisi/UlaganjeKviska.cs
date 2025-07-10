@@ -26,25 +26,29 @@ namespace Klase.General.Servisi
             byte[] buffer = new byte[1024];
             string poruka = string.Empty;
             int pristigliOdgovori = 0;
+
+        
             if (igrac1.kvisko)
             {
                 klijenti[0].Send(Encoding.UTF8.GetBytes("0"));
-                return;
+                pristigliOdgovori++;
             }
+            else
+                klijenti[0].Send(Encoding.UTF8.GetBytes("1"));
+
 
             if (igrac2.kvisko)
             {
                 klijenti[1].Send(Encoding.UTF8.GetBytes("0"));
-                return;
+                pristigliOdgovori++;
             }
-
-            foreach(Socket client in klijenti) 
-                client.Send(Encoding.UTF8.GetBytes("1"));
+            else
+                klijenti[1].Send(Encoding.UTF8.GetBytes("1"));
 
             try
             {
 
-                while (pristigliOdgovori != 2)
+                while (true)
                 {
                     List<Socket> checkRead = new List<Socket>();
                     List<Socket> checkError = new List<Socket>();
@@ -75,6 +79,9 @@ namespace Klase.General.Servisi
                             }
                             else if (poruka == "ne")
                                 pristigliOdgovori++;
+
+                            if (pristigliOdgovori == 2)
+                                return;
                         }
 
                     }
