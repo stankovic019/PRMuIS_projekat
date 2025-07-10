@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Klase.Anagrami.Modeli;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 namespace Klase.Pitanja_i_Odgovori.Modeli
 {
     public class PitanjaIOdgovori
@@ -15,6 +16,9 @@ namespace Klase.Pitanja_i_Odgovori.Modeli
 
         private List<string> pitanjaRedosled = new List<string>();
         private int indeksTrenutnogPitanja = -1;
+        public string REC { get; set; }
+        public List<PonudjenaRec> ponudjeneReci;
+        Dictionary<char, int> rec = new Dictionary<char, int>();
 
         public PitanjaIOdgovori(string tekucePitanje,  bool tacanOdgovor, Dictionary<string, bool> svaPitanja)
         {
@@ -25,6 +29,24 @@ namespace Klase.Pitanja_i_Odgovori.Modeli
 
         public PitanjaIOdgovori()
         {
+
+        }
+        public PitanjaIOdgovori(string pitanjaTxt)
+        {
+            string[] splits = pitanjaTxt.Split("\r\n");
+
+            this.REC = splits[0];
+
+            this.ponudjeneReci = new List<PonudjenaRec>();
+
+            for (int i = 1; i < splits.Length; i++)
+                ponudjeneReci.Add(new PonudjenaRec(splits[i].Trim()));
+
+            foreach (char c in REC)
+                if (rec.Keys.Contains(c))
+                    rec[c]++;
+                else
+                    rec.Add(c, 1);
 
         }
 
