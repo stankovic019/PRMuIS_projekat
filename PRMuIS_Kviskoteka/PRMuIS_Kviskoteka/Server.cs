@@ -462,9 +462,10 @@ namespace PRMuIS_Kviskoteka
                 {
                     klijenti[1].Send(Encoding.UTF8.GetBytes("Nereseno je."));
                     klijenti[0].Send(Encoding.UTF8.GetBytes("Nereseno je."));
+                    Console.WriteLine("NERESENO JE!");
                 }
             }
-                Console.WriteLine("Server zavrsava sa radom");
+                Console.WriteLine("TCP Server zavrsava sa radom");
             Console.ReadKey();
             serverSocket.Close();
 
