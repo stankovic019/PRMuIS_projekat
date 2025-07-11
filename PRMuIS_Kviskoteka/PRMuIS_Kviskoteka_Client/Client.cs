@@ -58,7 +58,7 @@ namespace PRMuIS_Kviskoteka_Client
                 byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                 try
                 {
-                    int brBajta = UDPclientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPdestinationEP); 
+                    int brBajta = UDPclientSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPdestinationEP);
                     Console.WriteLine($"Poslata prijava ka {UDPdestinationEP}...");
                     Console.WriteLine();
                     Thread.Sleep(2000);
@@ -68,17 +68,17 @@ namespace PRMuIS_Kviskoteka_Client
 
                     //povratna vrednost prijave, da li je uspesna ili ne
                     int povratnaVrednost = poruka[0] - 48;
-                    
-                        Console.WriteLine($"{UDPposiljaocEP} - {poruka.Substring(1)}");
-                        Thread.Sleep(2000);
-                        Console.Clear();
+
+                    Console.WriteLine($"{UDPposiljaocEP} - {poruka.Substring(1)}");
+                    Thread.Sleep(2000);
+                    Console.Clear();
 
                     if (povratnaVrednost == 1)
                     {
                         TCPKonekcijaJedanKorisnik();
                         break;
                     }
-                    else if(povratnaVrednost == 2)
+                    else if (povratnaVrednost == 2)
                     {
                         TCPKonekcijaDvaKorisnika();
                         break;
@@ -95,7 +95,8 @@ namespace PRMuIS_Kviskoteka_Client
         }
 
 
-        static void TCPKonekcijaJedanKorisnik() {
+        static void TCPKonekcijaJedanKorisnik()
+        {
 
 
             Socket TCPclientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -126,11 +127,11 @@ namespace PRMuIS_Kviskoteka_Client
             byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
             TCPclientSocket.Send(binarnaPoruka);
 
-        
+
             //pokretanje igara
 
             Console.Clear();
-   
+
 
             brBajta = TCPclientSocket.Receive(buffer);
             int brojIgara = Convert.ToInt32(Encoding.UTF8.GetString(buffer, 0, brBajta));
@@ -181,7 +182,7 @@ namespace PRMuIS_Kviskoteka_Client
                         if (poruka == "izlaz") break;
                     }
                 }
-            
+
                 Thread.Sleep(1000);
                 Console.Clear();
             }
@@ -202,7 +203,7 @@ namespace PRMuIS_Kviskoteka_Client
             TCPclientSocket.Connect(TCPserverEP);
             byte[] buffer = new byte[1024];
             string poruka = string.Empty;
-       
+
 
 
             int brBajta = TCPclientSocket.Receive(buffer);
@@ -227,40 +228,27 @@ namespace PRMuIS_Kviskoteka_Client
 
 
             brBajta = TCPclientSocket.Receive(buffer);
-            
+
 
 
             for (int i = 0; i < 3; ++i)
             {
                 Console.Clear();
 
-                //brBajta = TCPclientSocket.Receive(buffer);
-                //string kvisko = Encoding.UTF8.GetString(buffer, 0, brBajta);
+                askForKvisko(TCPclientSocket);
                 
-                //if(kvisko == "0")
-                //    TCPclientSocket.Send(Encoding.UTF8.GetBytes("0"));
-                //else
-                //{
-                //    string odg;
-                //    do
-                //    {
-                //        Console.Write("Da li zelite da ulozite kviska pre pocetka igre? (da/ne): ");
-                //        odg = Console.ReadLine().ToLower();
-                //    } while (odg != "da" && odg != "ne");
-                //    TCPclientSocket.Send(Encoding.UTF8.GetBytes(odg));
-                //    Console.Clear();
-                //}
-
 
                 brBajta = TCPclientSocket.Receive(buffer);
                 string trenutnaIgra = Encoding.UTF8.GetString(buffer, 0, brBajta);
 
                 Console.WriteLine("Trenutna igra broj " + (i + 1) + ": " + trenutnaIgra);
+                Array.Clear(buffer, 0, buffer.Length);
 
                 if (trenutnaIgra == "ANAGRAM")
                 {
                     while (true)
                     {
+                        Array.Clear(buffer, 0, buffer.Length);
                         Console.Write("Unesite rec: ");
                         poruka = Console.ReadLine().Trim().ToLower();
                         binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
@@ -277,6 +265,7 @@ namespace PRMuIS_Kviskoteka_Client
                 {
                     while (true)
                     {
+                        Array.Clear(buffer, 0, buffer.Length);
                         Console.Write("Unesite slovo(a/b): ");
                         poruka = Console.ReadLine().Trim().ToLower();
                         binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
@@ -295,6 +284,7 @@ namespace PRMuIS_Kviskoteka_Client
                     string uvodnaPoruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
                     while (true)
                     {
+                        Array.Clear(buffer, 0, buffer.Length);
                         Console.WriteLine(uvodnaPoruka);
                         brBajta = TCPclientSocket.Receive(buffer);
                         poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
@@ -321,10 +311,38 @@ namespace PRMuIS_Kviskoteka_Client
             brBajta = TCPclientSocket.Receive(buffer);
             Console.WriteLine(Encoding.UTF8.GetString(buffer, 0, brBajta));
             Console.ReadKey();
-            
+
             Console.WriteLine("TCP Klijent zavrsava sa radom");
             Console.ReadKey();
-           
+
+        }
+
+
+        static void askForKvisko(Socket socket)
+        {
+            byte[] buffer = new byte[1024];
+            string poruka = string.Empty;
+            string odgovor = string.Empty;
+
+            int brBajta = socket.Receive(buffer);
+            poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
+
+            if (poruka[0] == '1')
+                do
+                {
+                    Console.Write(poruka.Substring(1));
+                    odgovor = Console.ReadLine().Trim().ToLower();
+                }
+                while (odgovor != "da" && odgovor != "ne");
+            else
+                odgovor = "ne";
+            
+            buffer = Encoding.UTF8.GetBytes(odgovor);
+
+            socket.Send(buffer);
+
+            Console.Clear();
+
         }
 
     }

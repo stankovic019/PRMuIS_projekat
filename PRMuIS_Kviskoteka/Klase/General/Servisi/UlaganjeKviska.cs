@@ -25,70 +25,62 @@ namespace Klase.General.Servisi
             Console.WriteLine("Ulaganje Kviska...");
             byte[] buffer = new byte[1024];
             string poruka = string.Empty;
-            int pristigliOdgovori = 0;
+            string odgovor = string.Empty;
+            int brBajta = 0;
+            int brojOdgovora = 0;
 
-        
-            if (igrac1.kvisko)
+            string mozeKvisko = "1Da li zelite da ulozite kviska? (da/ne): ";
+            string neMozeKvisko = "0Vec ste ulozili kviska u ovoj rundi...";
+
+            foreach (Socket s in klijenti)
             {
-                klijenti[0].Send(Encoding.UTF8.GetBytes("0"));
-                pristigliOdgovori++;
+                if (s == klijenti[0])
+                    if (!igrac1.kvisko)
+                        s.Send(Encoding.UTF8.GetBytes(mozeKvisko));
+                    else
+                        s.Send(Encoding.UTF8.GetBytes(neMozeKvisko));
+
+                if(s == klijenti[1])
+                    if (!igrac2.kvisko)
+                        s.Send(Encoding.UTF8.GetBytes(mozeKvisko));
+                    else
+                        s.Send(Encoding.UTF8.GetBytes(neMozeKvisko));
             }
-            else
-                klijenti[0].Send(Encoding.UTF8.GetBytes("1"));
 
-
-            if (igrac2.kvisko)
+            while (brojOdgovora < 2)
             {
-                klijenti[1].Send(Encoding.UTF8.GetBytes("0"));
-                pristigliOdgovori++;
-            }
-            else
-                klijenti[1].Send(Encoding.UTF8.GetBytes("1"));
+                List<Socket> checkRead = new List<Socket>();
+                List<Socket> checkError = new List<Socket>();
 
-            try
-            {
-
-                while (true)
+                foreach(Socket s in klijenti)
                 {
-                    List<Socket> checkRead = new List<Socket>();
-                    List<Socket> checkError = new List<Socket>();
+                    checkRead.Add(s);
+                    checkError.Add(s);
+                }
 
+                Socket.Select(checkRead, null, checkError, 1000);
 
-                    foreach (Socket s in klijenti)
+                if(checkRead.Count > 0)
+                {
+                    foreach(Socket s in checkRead)
                     {
-                        checkRead.Add(s);
-                        checkError.Add(s);
-                    }
+                        brBajta = s.Receive(buffer);
+                        brojOdgovora++;
+                        odgovor = Encoding.UTF8.GetString(buffer, 0, brBajta);
 
-                    Socket.Select(checkRead, null, checkError, 1000);
-
-                    if (checkRead.Count > 0)
-                    {
-                        foreach (Socket s in checkRead)
+                        if (odgovor == "da")
                         {
-
-                            int brBajta = s.Receive(buffer);
-                            poruka = Encoding.UTF8.GetString(buffer, 0, brBajta);
-                            if (poruka == "da")
-                            {
-                                pristigliOdgovori++;
-                                if (s == klijenti[0])
-                                    igrac1.ulaganjeKviska(idx);
-                                else
-                                    igrac2.ulaganjeKviska(idx);
-                            }
-                            else if (poruka == "ne")
-                                pristigliOdgovori++;
-
-                            if (pristigliOdgovori == 2)
-                                return;
+                            if (s == klijenti[0])
+                                igrac1.ulaganjeKviska(idx);
+                            else
+                                igrac2.ulaganjeKviska(idx);
                         }
-
                     }
                 }
 
+                checkRead.Clear();
+                checkError.Clear();
             }
-            catch (Exception e) { }
 
             Console.Clear();
         }

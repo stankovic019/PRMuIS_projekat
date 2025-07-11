@@ -118,5 +118,10 @@ namespace Klase.General.Modeli
 
         }
 
+        public void Cat()
+        {
+            Console.Write("Meow");
+        }
+
     }
 }

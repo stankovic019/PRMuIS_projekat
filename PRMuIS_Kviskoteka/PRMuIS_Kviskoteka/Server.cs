@@ -346,7 +346,7 @@ namespace PRMuIS_Kviskoteka
                             for (int i = 0; i < 3; ++i)
                             {
 
-                                //kvisko.Ulozi(klijenti, serverSocket, i);
+                                kvisko.Ulozi(klijenti, serverSocket, i);
 
                                 string igra = igraci[0].getIgra(i); //sve jedno je, iste igre igraju
                                 Console.Clear();
@@ -376,6 +376,7 @@ namespace PRMuIS_Kviskoteka
                                         s.Send(binarnaPoruka);
                                     pitanjaIodg.IgrajDvaIgraca(klijenti, serverSocket);
                                     Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
+                                    Console.Clear();
                                     foreach (Igrac ig in igraci)
                                     {
                                         Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
@@ -426,7 +427,7 @@ namespace PRMuIS_Kviskoteka
                 klijenti[0].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                 klijenti[1].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
             }
-            else if(igraci[0].ukupnoPoena > igraci[1].ukupnoPoena)
+            else if(igraci[0].ukupnoPoena < igraci[1].ukupnoPoena)
             {
                 klijenti[1].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                 klijenti[0].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
