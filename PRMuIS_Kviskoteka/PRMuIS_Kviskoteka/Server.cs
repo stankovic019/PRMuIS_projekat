@@ -91,7 +91,10 @@ namespace PRMuIS_Kviskoteka
                         
                         if (igraci.Count == 2)
                         {
-                            Console.WriteLine("pokrecem igru...");
+                            Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
+                            Console.WriteLine("Pokrecem igre...");
+                            Thread.Sleep(1000);
+                            Console.Clear();
                             poruka = "2";
                             byte[] binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                             foreach(EndPoint ep in multiplayerEndPoints)
@@ -102,16 +105,17 @@ namespace PRMuIS_Kviskoteka
                         }
                         else
                         {
+                            Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
                             Console.WriteLine("Cekam prijavu drugog igraca...");
 
                         }
                     }
                     else
                         {
+                            Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
                             poruka = "Neispravan unos. Pokusajte ponovo.";
                             byte[] binarnaPoruka = Encoding.UTF8.GetBytes("0Server - " + poruka);
                             brBajta = UDPserverSocket.SendTo(binarnaPoruka, 0, binarnaPoruka.Length, SocketFlags.None, UDPposiljaocEP);
-                            Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
                         }
                     
                 }
@@ -256,8 +260,8 @@ namespace PRMuIS_Kviskoteka
             int maxKlijenata = 2;
             serverSocket.Listen(maxKlijenata);
 
-
             Console.WriteLine($"Server je stavljen u stanje osluskivanja i ocekuje komunikaciju na {serverEP}");
+            Console.WriteLine("\n----------------------------------------------------------------------------------------\n");
 
 
 
@@ -302,7 +306,7 @@ namespace PRMuIS_Kviskoteka
                                 Socket client = serverSocket.Accept();
                                 client.Blocking = false;
                                 klijenti.Add(client);
-                                Console.WriteLine($"Klijent se povezao sa {client.RemoteEndPoint}");
+                                Console.WriteLine($"SERVER: Igrac {(client == klijenti[0] ? igraci[0].username : igraci[1].username)} se povezao sa {client.RemoteEndPoint}");
                                 poruka = $"Vasa TCP/IP adresa i port su: {client.RemoteEndPoint}";
                                 binarnaPoruka = Encoding.UTF8.GetBytes(poruka);
                                 client.Send(binarnaPoruka);
@@ -313,7 +317,7 @@ namespace PRMuIS_Kviskoteka
                                 int brBajta = s.Receive(buffer);
                                 if (brBajta == 0)
                                 {
-                                    Console.WriteLine("Klijent je prekinuo komunikaciju");
+                                    Console.WriteLine($"SERVER: Klijent {(s == klijenti[0] ? igraci[0].username : igraci[1].username)} je prekinuo komunikaciju");
                                     s.Close();
                                     klijenti.Remove(s);
 
@@ -328,11 +332,12 @@ namespace PRMuIS_Kviskoteka
 
                                     if (starting == 2)
                                     {
-                                        Console.WriteLine("Pokrecem igre...");
+                                        Console.WriteLine("SERVER: Pokrecem igre...");
                                         Thread.Sleep(1000);
+                                        Console.Clear();
                                     }
                                     else
-                                        Console.WriteLine("Cekam drugog igraca...");
+                                        Console.WriteLine("SERVER: Cekam drugog igraca...");
                                 }
                             }
     
@@ -358,6 +363,7 @@ namespace PRMuIS_Kviskoteka
                                     foreach (Socket s in klijenti)
                                         s.Send(binarnaPoruka);
                                     anagram.Igraj(klijenti, serverSocket);
+                                    Console.Clear();
                                     Console.WriteLine("Ukupni poeni u igri 'Anagram':");
                                     foreach (Igrac ig in igraci)
                                     {
@@ -375,8 +381,8 @@ namespace PRMuIS_Kviskoteka
                                     foreach (Socket s in klijenti)
                                         s.Send(binarnaPoruka);
                                     pitanjaIodg.IgrajDvaIgraca(klijenti, serverSocket);
-                                    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
                                     Console.Clear();
+                                    Console.WriteLine("Ukupni poeni u igri 'Pitanja i Odgovori':");
                                     foreach (Igrac ig in igraci)
                                     {
                                         Console.WriteLine($"\t{ig.username} :  {ig.poeniUTrenutnojIgri}");
@@ -426,11 +432,15 @@ namespace PRMuIS_Kviskoteka
             {
                 klijenti[0].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                 klijenti[1].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                Console.WriteLine("\n\n");
+                Console.WriteLine($"POBEDNIK: {igraci[0].username}");
             }
             else if(igraci[0].ukupnoPoena < igraci[1].ukupnoPoena)
             {
                 klijenti[1].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                 klijenti[0].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                Console.WriteLine("\n\n");
+                Console.WriteLine($"POBEDNIK: {igraci[1].username}");
             }
             else
             {
@@ -438,11 +448,15 @@ namespace PRMuIS_Kviskoteka
                 {
                     klijenti[0].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                     klijenti[1].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine($"POBEDNIK JE IGRAC: \"{igraci[0].username}\" JER JE OSTVARIO VISE POENA ULAGANJEM KVISKA");
                 }
                 else if (igraci[0].poeniSaKviskom < igraci[1].poeniSaKviskom)
                 {
                     klijenti[1].Send(Encoding.UTF8.GetBytes("Pobedili ste!"));
                     klijenti[0].Send(Encoding.UTF8.GetBytes("Izgubili ste."));
+                    Console.WriteLine("\n\n");
+                    Console.WriteLine($"POBEDNIK JE IGRAC: \"{igraci[1].username}\" JER JE OSTVARIO VISE POENA ULAGANJEM KVISKA");
                 }
                 else
                 {
@@ -460,13 +474,13 @@ namespace PRMuIS_Kviskoteka
         {
             for (int i = 0; i < brojKlijenata; i++)
             {
-                // Putanja do izvršnog fajla klijenta (potrebno je kompajlirati ga)
+                // Putanja do izvršnog fajla servera
                 string trenutniDir = AppDomain.CurrentDomain.BaseDirectory;
                
                 // Relativna putanja do klijenta
                 string relativnaPutanja = Path.Combine("..", "..", "..", "..", "PRMuIS_Kviskoteka_Client", "bin", "Debug", "net5.0", "PRMuIS_Kviskoteka_Client.exe");
         
-                // Kombinuj da dobiješ punu putanju
+                // putanja do klijenta
                 string clientPath = Path.GetFullPath(Path.Combine(trenutniDir, relativnaPutanja));
                 //Console.WriteLine(clientPath);
                 //Console.ReadKey();

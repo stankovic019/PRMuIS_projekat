@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -107,7 +108,12 @@ namespace Klase.General.Modeli
                 else if (igre[i] == "as")
                     sb.Append("\tasocijacija: ");
 
-                sb.Append($"{poeniUIgrama[i]}\n");
+                sb.Append($"{poeniUIgrama[i]}");
+                if (i == kviskoIdx)
+                    sb.Append(" - ulozen kvisko");
+
+                sb.Append("\n");
+                    
                 ukupnoPoena += poeniUIgrama[i];
             }
 

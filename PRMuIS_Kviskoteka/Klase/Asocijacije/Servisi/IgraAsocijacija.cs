@@ -462,7 +462,7 @@ namespace Klase.Asocijacije.Servisi
             sledSocket.Send(Encoding.UTF8.GetBytes("izlaz"));
 
             Console.WriteLine(asocijacija.ToString());
-            Console.ReadLine();
+            Thread.Sleep(5000);
         }
     }
 }
