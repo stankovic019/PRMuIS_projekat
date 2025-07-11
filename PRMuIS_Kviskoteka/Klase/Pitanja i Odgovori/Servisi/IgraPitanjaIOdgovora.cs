@@ -169,18 +169,21 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
 
         public void Igraj(Socket client)
         {
+            byte[] buffer = new byte[1024];
             byte[] binarnaPoruka;
             while (PostaviSledecePitanje())
             {
+                Array.Clear(buffer, 0, buffer.Length);
+                Console.Clear();
+
                 Console.WriteLine("Pitanje: " + pitanjaIOdgr.TekucePitanje);
                 Console.WriteLine("a) DA");
                 Console.WriteLine("b) NE");
-                byte[] buffer = new byte[1024];
                 int brojBajta = client.Receive(buffer);
-                string unos = Encoding.UTF8.GetString(buffer, 0, brojBajta);
+                string unos = Encoding.UTF8.GetString(buffer, 0, brojBajta).Trim().ToLower();
                 Console.Write("Uneti odgovor: " + unos);
                 Thread.Sleep(1000);
-              
+
 
                 if (unos.ToLower() == "izlaz")
                 {
@@ -208,27 +211,18 @@ namespace Klase.Pitanja_i_Odgovori.Servisi
                     Console.WriteLine(e.Message + " Pitanje se ne računa.\n");
                 }
 
-                if(indeksTrenutnogPitanja+1 == 5)
+                if (indeksTrenutnogPitanja++ < 4)
                 {
-                    binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
-                    client.Send(binarnaPoruka);
-                    continue;
+                    client.Send(Encoding.UTF8.GetBytes("continue"));
                 }
 
-                binarnaPoruka = Encoding.UTF8.GetBytes(unos);
-                client.Send(binarnaPoruka);
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
                 Console.Clear();
 
             }
 
-            Thread.Sleep(1000);
-            Console.Clear();
-            //binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
-            //client.Send(binarnaPoruka);
-            //Console.WriteLine("Kraj igre! Ukupno poena: " + poeni + " od mogucih " + maksimalniPoeni);
-            //Console.WriteLine("Pritisnite bilo koji taster za izlaz...");
-            //Console.ReadKey();
+            binarnaPoruka = Encoding.UTF8.GetBytes("izlaz");
+            client.Send(binarnaPoruka);
         }
 
         public void IgrajDvaIgraca(List<Socket> klijenti, Socket ServerSocket)
