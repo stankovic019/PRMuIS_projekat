@@ -210,7 +210,7 @@ namespace Klase.Anagrami.Servisi
                 catch (Exception e) { }
             }
 
-            //mozda poslati poruku da se ide na drugu igru
+            
         }
     }
 }
